@@ -24,22 +24,16 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"example.com","root":"/","images":"/images","scheme":"Pisces","version":"8.1.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="简单解释一下双线性插值">
-<meta property="og:type" content="article">
-<meta property="og:title" content="双线性插值与实现">
-<meta property="og:url" content="http://example.com/2020/11/24/2020-11-24-20201123-biibterpol/index.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Elku&#39;s Homepage">
+<meta property="og:url" content="http://example.com/categories/%E7%AE%97%E6%B3%95/index.html">
 <meta property="og:site_name" content="Elku&#39;s Homepage">
-<meta property="og:description" content="简单解释一下双线性插值">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/2020/11/24/2020-11-24-20201123-biibterpol/2020-11-24-20201123-biibterpol/v2-ad3d95548a97aa47ca85867cd0f2e161_720w.jpg">
-<meta property="article:published_time" content="2020-11-24T01:56:04.000Z">
-<meta property="article:modified_time" content="2020-11-24T02:31:21.627Z">
 <meta property="article:author" content="Elkulas Jiang">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/2020/11/24/2020-11-24-20201123-biibterpol/2020-11-24-20201123-biibterpol/v2-ad3d95548a97aa47ca85867cd0f2e161_720w.jpg">
 
 
-<link rel="canonical" href="http://example.com/2020/11/24/2020-11-24-20201123-biibterpol/">
+<link rel="canonical" href="http://example.com/categories/%E7%AE%97%E6%B3%95/">
 
 
 <script class="page-configurations">
@@ -47,11 +41,11 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : true,
+    isPost : false,
     lang   : 'zh-CN'
   };
 </script>
-<title>双线性插值与实现 | Elku's Homepage</title>
+<title>分类: 算法 | Elku's Homepage</title>
   
 
 
@@ -152,7 +146,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+    <div class="sidebar-inner sidebar-overview-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -165,12 +159,13 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <section class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8C%E7%BA%BF%E6%80%A7%E6%8F%92%E5%80%BC"><span class="nav-number">1.</span> <span class="nav-text">双线性插值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#opencv%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">OpenCV实现</span></a></li></ol></div>
         </section>
         <!--/noindex-->
 
         <section class="site-overview-wrap sidebar-panel">
           <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Elkulas Jiang"
+      src="/images/shinai2.png">
   <p class="site-author-name" itemprop="name">Elkulas Jiang</p>
   <div class="site-description" itemprop="description"></div>
 </div>
@@ -182,6 +177,18 @@
           <span class="site-state-item-count">2</span>
           <span class="site-state-item-name">日志</span>
         </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
 </div>
@@ -222,106 +229,50 @@
 </noscript>
 
 
-    <div class="main-inner post posts-expand">
+    <div class="main-inner category posts-collapse">
 
 
   
-
-
-<div class="post-block">
   
   
+  <div class="post-block">
+    <div class="post-content">
+      <div class="collection-title">
+        <h2 class="collection-header">算法
+          <small>分类</small>
+        </h2>
+      </div>
 
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/11/24/2020-11-24-20201123-biibterpol/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Elkulas Jiang">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Elku's Homepage">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          双线性插值与实现
-        </h1>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
       
-
-      <time title="创建时间：2020-11-24 09:56:04 / 修改时间：10:31:21" itemprop="dateCreated datePublished" datetime="2020-11-24T09:56:04+08:00">2020-11-24</time>
-    </span>
-
-  
-</div>
-
-            <div class="post-description">简单解释一下双线性插值</div>
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-        <h2 id="双线性插值">双线性插值</h2>
-<p>双线性差值本质就是两次单线性差值,也就是在两个方向计算了三次.</p>
-<p><img src="2020-11-24-20201123-biibterpol/v2-ad3d95548a97aa47ca85867cd0f2e161_720w.jpg" style="zoom: 67%;" /></p>
-<p>向这里就是Q代表的四个点分别加以权重然后对P点进行赋值.权重的取值本质上就是根据P点和四个点之间的距离来决定的</p>
-<p>x方向上的两次单线性插值 <span class="math display">\[
-f\left(R_{1}\right)=\frac{x_{2}-x}{x_{2}-x_{1}} f\left(Q_{11}\right)+\frac{x-x_{1}}{x_{2}-x_{1}} f\left(Q_{21}\right)
-\]</span></p>
-<p><span class="math display">\[
-f\left(R_{2}\right)=\frac{x_{2}-x}{x_{2}-x_{1}} f\left(Q_{12}\right)+\frac{x-x_{1}}{x_{2}-x_{1}} f\left(Q_{22}\right)
-\]</span></p>
-<p>y方向上的一次单次插值 <span class="math display">\[
-f(P)=\frac{y_{2}-y}{y_{2}-y_{1}} f\left(R_{1}\right)+\frac{y-y_{1}}{y_{2}-y_{1}} f\left(R_{2}\right)
-\]</span> 总结而言便是 <span class="math display">\[
-f(x, y)=\frac{f\left(Q_{11}\right)}{\left(x_{2}-x_{1}\right)\left(y_{2}-y_{1}\right)}\left(x_{2}-x\right)\left(y_{2}-y\right)+\frac{f\left(Q_{21}\right)}{\left(x_{2}-x_{1}\right)\left(y_{2}-y_{1}\right)}\left(x-x_{1}\right)\left(y_{2}-y\right)+\frac{f\left(Q_{12}\right)}{\left(x_{2}-x_{1}\right)\left(y_{2}-y_{1}\right)}\left(x_{2}-x\right)\left(y-y_{1}\right)
-\]</span> 因为根据前提,也就是双线性插值的前提,可以很简单的得到以下关系 <span class="math display">\[
-x_{2}=x_{1}+1 ; y_{2}=y_{1}+1
-\]</span> 将这个式子带回去,分母就全部都是1 <span class="math display">\[
-f(x, y)=f\left(Q_{11}\right)\left(x_{2}-x\right)\left(y_{2}-y\right)+f\left(Q_{21}\right)\left(x-x_{1}\right)\left(y_{2}-y\right)+f\left(Q_{12}\right)\left(x_{2}-x\right)\left(y-y_{1}\right)+f\left(Q_{22}\right)\left(x-x_{1}\right)\left(y-y_{1}\right)
-\]</span> 用这个式子就可以进行双线性插值的求解</p>
-<h2 id="opencv实现">OpenCV实现</h2>
-<p>这里参考高博的方式,给出8位图像的双线性插值函数</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">float</span> <span class="title">GetPixelValue</span><span class="params">(<span class="keyword">const</span> cv::Mat &amp;img, <span class="keyword">float</span> x, <span class="keyword">float</span> y)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(img.type() == <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 固定指针初始指向dst点左上角的点</span></span><br><span class="line">        uchar *data = &amp;img.data[<span class="keyword">int</span>(y) * img.step + <span class="keyword">int</span>(x)];</span><br><span class="line">        <span class="keyword">float</span> xx = x - <span class="built_in">floor</span>(x);</span><br><span class="line">        <span class="keyword">float</span> yy = y - <span class="built_in">floor</span>(y);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">float</span>(</span><br><span class="line">            	<span class="comment">// data[0] 左上角的点</span></span><br><span class="line">                (<span class="number">1</span> - xx) * (<span class="number">1</span> - yy) * data[<span class="number">0</span>] +</span><br><span class="line">            	<span class="comment">// data[1] 右上角的点</span></span><br><span class="line">                xx * (<span class="number">1</span> - yy) * data[<span class="number">1</span>] +</span><br><span class="line">            	<span class="comment">// data[img.step] 左下角的点</span></span><br><span class="line">                (<span class="number">1</span> - xx) * yy * data[img.step] +</span><br><span class="line">            	<span class="comment">// data[img.step + 1] 右下角的点</span></span><br><span class="line">                xx * yy * data[img.step + <span class="number">1</span>]</span><br><span class="line">        ); </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+    <div class="collection-year">
+      <span class="collection-header">2020</span>
     </div>
 
-    
-    
-    
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+      <div class="post-meta-container">
+        <time itemprop="dateCreated"
+              datetime="2020-11-24T09:56:04+08:00"
+              content="2020-11-24">
+          11-24
+        </time>
+      </div>
 
-    <footer class="post-footer">
+      <div class="post-title">
+          <a class="post-title-link" href="/2020/11/24/20201123-biibterpol/" itemprop="url">
+            <span itemprop="name">双线性插值与实现</span>
+          </a>
+      </div>
 
-        
-
-          <div class="post-nav">
-            <div class="post-nav-item">
-            </div>
-            <div class="post-nav-item">
-                <a href="/2020/11/24/%E7%BC%A9%E6%94%BE%E5%86%85%E5%8F%82/" rel="next" title="图像缩放后相机内参变化">
-                  图像缩放后相机内参变化 <i class="fa fa-chevron-right"></i>
-                </a>
-            </div>
-          </div>
-    </footer>
+      
+    </header>
   </article>
-</div>
 
-
-
-
-
+    </div>
+  </div>
+  
+  
+  
 
 
 <script>
