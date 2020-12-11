@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"elkulas.github.io","root":"/","images":"/images","scheme":"Pisces","version":"8.1.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="安装多版本OpenCV并且多版本共存">
+<meta property="og:type" content="article">
+<meta property="og:title" content="多版本OpenCV安装与共存">
+<meta property="og:url" content="https://elkulas.github.io/2020/07/01/20200615-Multiple-version-OpenCV/index.html">
+<meta property="og:site_name" content="Elku&#39;s Homepage">
+<meta property="og:description" content="安装多版本OpenCV并且多版本共存">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-07-01T07:14:55.000Z">
+<meta property="article:modified_time" content="2020-07-01T07:32:28.926Z">
+<meta property="article:author" content="Elkulas Jiang">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://elkulas.github.io/2020/07/01/20200615-Multiple-version-OpenCV/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>多版本OpenCV安装与共存 | Elku's Homepage</title>
+  
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Elku's Homepage</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ubuntu%E5%A4%9A%E7%89%88%E6%9C%ACopencv%E5%85%B1%E5%AD%98%E4%B8%8E%E5%88%87%E6%8D%A2"><span class="nav-number">1.</span> <span class="nav-text">Ubuntu多版本OpenCV共存与切换</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%9A%E7%89%88%E6%9C%ACopencv%E5%85%B1%E5%AD%98"><span class="nav-number">1.2.</span> <span class="nav-text">多版本OpenCV共存</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BDopencv"><span class="nav-number">1.2.1.</span> <span class="nav-text">下载OpenCV</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E4%BE%9D%E8%B5%96%E5%8C%85"><span class="nav-number">1.2.2.</span> <span class="nav-text">安装依赖包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85opencv"><span class="nav-number">1.2.3.</span> <span class="nav-text">编译安装OpenCV</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#notice"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">NOTICE</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%9A%E7%89%88%E6%9C%ACopencv%E5%88%87%E6%8D%A2"><span class="nav-number">1.3.</span> <span class="nav-text">多版本OpenCV切换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#cmakelists%E7%9A%84%E6%9B%B4%E6%94%B9"><span class="nav-number">1.3.1.</span> <span class="nav-text">CMakeLists的更改</span></a></li></ol></li></ol></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Elkulas Jiang"
+      src="/images/shinai2.png">
+  <p class="site-author-name" itemprop="name">Elkulas Jiang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">41</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Elkulas" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Elkulas" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:elkulasjiang@gmail.com" title="E-Mail → mailto:elkulasjiang@gmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/2405601891" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;2405601891" rel="noopener" target="_blank"><i class="weibo fa-fw"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/Elkulas" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;Elkulas" rel="noopener" target="_blank"><i class="twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://elkulas.github.io/2020/07/01/20200615-Multiple-version-OpenCV/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shinai2.png">
+      <meta itemprop="name" content="Elkulas Jiang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Elku's Homepage">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          多版本OpenCV安装与共存
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2020-07-01 15:14:55 / 修改时间：15:32:28" itemprop="dateCreated datePublished" datetime="2020-07-01T15:14:55+08:00">2020-07-01</time>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">安装多版本OpenCV并且多版本共存</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="ubuntu多版本opencv共存与切换">Ubuntu多版本OpenCV共存与切换</h1>
+<h2 id="前言">前言</h2>
+<p>这里主要是参考<a target="_blank" rel="noopener" href="https://blog.csdn.net/learning_tortosie/article/details/80594399">这个博客</a>，为了防止博客挂掉所以这边自己再备份一个。</p>
+<h2 id="多版本opencv共存">多版本OpenCV共存</h2>
+<p>假设我们已经安装好一版OpenCV，一般都安装在<code>/usr/local</code>下。 如果需要安装另一个版本的OpenCV，就不能再安装到<code>/usr/local</code>，而是选择其他路径，否则会覆盖掉之前的版本。</p>
+<h3 id="下载opencv">下载OpenCV</h3>
+<p>首先去https://opencv.org/releases.html下载所需版本的Sources版，也可去https://github.com/opencv/opencv/tree/3.4.1下载。 假设我们安装的第二个OpenCV版本为3.4.1。</p>
+<h3 id="安装依赖包">安装依赖包</h3>
+<figure class="highlight q"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[compiler] sudo apt-<span class="built_in">get</span> install build-essential</span><br><span class="line">[required] sudo apt-<span class="built_in">get</span> install cmake git libgtk2<span class="number">.0</span>-<span class="built_in">dev</span> pkg-config libavcodec-<span class="built_in">dev</span> libavformat-<span class="built_in">dev</span> libswscale-<span class="built_in">dev</span></span><br><span class="line">[optional] sudo apt-<span class="built_in">get</span> install python-<span class="built_in">dev</span> python-numpy libtbb2 libtbb-<span class="built_in">dev</span> libjpeg-<span class="built_in">dev</span> libpng-<span class="built_in">dev</span> libtiff-<span class="built_in">dev</span> libjasper-<span class="built_in">dev</span> libdc1394<span class="number">-22</span>-<span class="built_in">dev</span></span><br></pre></td></tr></table></figure>
+<h3 id="编译安装opencv">编译安装OpenCV</h3>
+<p>详见官方文档https://docs.opencv.org/master/d7/d9f/tutorial_linux_install.html，参考步骤如下。</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ cd opencv-3.4.1</span><br><span class="line">$ mkdir build</span><br><span class="line">$ cd build</span><br><span class="line">$ mkdir installed</span><br><span class="line">$ cmake \</span><br><span class="line"><span class="attribute">-DCMAKE_BUILD_TYPE</span>=RELEASE \</span><br><span class="line"><span class="attribute">-DCMAKE_INSTALL_PREFIX</span>=~/opencv-3.4.1/build/installed \</span><br><span class="line">\</span><br><span class="line"><span class="attribute">-DWITH_CUDA</span>=OFF \</span><br><span class="line">\</span><br><span class="line"><span class="attribute">-DBUILD_DOCS</span>=OFF \</span><br><span class="line"><span class="attribute">-DBUILD_EXAMPLES</span>=OFF \</span><br><span class="line"><span class="attribute">-DBUILD_TESTS</span>=OFF \</span><br><span class="line"><span class="attribute">-DBUILD_PERF_TESTS</span>=OFF \ </span><br><span class="line"><span class="built_in">..</span></span><br><span class="line">$ make -j4</span><br><span class="line">$ sudo make install</span><br></pre></td></tr></table></figure>
+<h4 id="notice">NOTICE</h4>
+<ol type="1">
+<li>其中<code>~/opencv-3.4.1/build/installed</code>为安装OpenCV3.4.1的路径，这个十分关键。</li>
+<li>设置OFF的理由如下，可大大加快编译速度，当然还要根据需求进行设置。</li>
+</ol>
+<p>It is useful also to unset BUILD_EXAMPLES, BUILD_TESTS, BUILD_PERF_TESTS - as they all will be statically linked with OpenCV and can take a lot of memory. 此外，还可以取消设置BUILD_EXAMPLES，BUILD_TESTS和BUILD_PERF_TESTS，因为它们都将与OpenCV静态链接，并且会占用大量内存。</p>
+<h2 id="多版本opencv切换">多版本OpenCV切换</h2>
+<p>打开<code>~/.bashrc</code> 或者我自己用的zsh，就是打开<code>~/.zshrc</code></p>
+<p>然后在文件末尾添加以下内容</p>
+<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export PKG_CONFIG_PATH=～/opencv-<span class="number">3.4</span>.<span class="number">1</span>/build/installed/<span class="class"><span class="keyword">lib</span>/<span class="title">pkgconfig</span></span></span><br><span class="line">export LD_LIBRARY_PATH=～/opencv-<span class="number">3.4</span>.<span class="number">1</span>/build/installed/<span class="class"><span class="keyword">lib</span></span></span><br></pre></td></tr></table></figure>
+<p>更新配置文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">source</span> ~/.zshrc</span> </span><br></pre></td></tr></table></figure>
+<p>查询OpenCV版本</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ pkg-<span class="built_in">config</span> <span class="comment">--modversion opencv</span></span><br></pre></td></tr></table></figure>
+<p>如果输出<code>3.4.1</code>，就表明配置成功。 如果想使用之前的版本，在<code>~/.bashrc</code> or<code>~/.zshrc</code> 中注释掉增加的内容，然后<code>source ~/.bashrc</code> or <code>source ~/.zshrc</code> 即可。</p>
+<h3 id="cmakelists的更改">CMakeLists的更改</h3>
+<p>如果只有一个版本的OpenCV，在CMakeList.txt中使用以下语句即可。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">FIND_PACKAGE</span><span class="params">(OpenCV REQUIRED)</span></span></span><br></pre></td></tr></table></figure>
+<p>在OpenCV编译好后，所在目录中会生成OpenCVConfig.cmake文件，这个文件中指定了CMake要去哪里找OpenCV，其.h文件在哪里等。 存在多版本OpenCV时，需要找到所需版本对应的OpenCVConfig.cmake文件，并将其路径添加到工程的CMakeLists.txt中。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">cmake_minimum_required</span><span class="params">(VERSION <span class="number">2.8</span>)</span></span>  </span><br><span class="line"><span class="function"><span class="title">set</span><span class="params">(OpenCV_DIR <span class="string">&quot;~/opencv-3.4.1/build&quot;</span>)</span></span>   </span><br><span class="line"><span class="function"><span class="title">project</span><span class="params">(test)</span></span>  </span><br><span class="line"><span class="function"><span class="title">find_package</span><span class="params">(OpenCV REQUIRED)</span></span> </span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/06/15/20200615-C-version-error/" rel="prev" title="C++规范不同致使的编译错误">
+                  <i class="fa fa-chevron-left"></i> C++规范不同致使的编译错误
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/07/09/20200709-Opencv-matrix/" rel="next" title="OpenCV Mat基础运算总结">
+                  OpenCV Mat基础运算总结 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Elkulas Jiang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'none'
+      },
+      options: {
+        renderActions: {
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+
+
+</body>
+</html>

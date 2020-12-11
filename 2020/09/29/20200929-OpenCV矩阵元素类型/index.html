@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"elkulas.github.io","root":"/","images":"/images","scheme":"Pisces","version":"8.1.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="在处理深度图时遇到的问题以及解释OpenCV中的各种矩阵的类型">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenCV矩阵元素类型">
+<meta property="og:url" content="https://elkulas.github.io/2020/09/29/20200929-OpenCV%E7%9F%A9%E9%98%B5%E5%85%83%E7%B4%A0%E7%B1%BB%E5%9E%8B/index.html">
+<meta property="og:site_name" content="Elku&#39;s Homepage">
+<meta property="og:description" content="在处理深度图时遇到的问题以及解释OpenCV中的各种矩阵的类型">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://elkulas.github.io/2020/09/29/20200929-OpenCV%E7%9F%A9%E9%98%B5%E5%85%83%E7%B4%A0%E7%B1%BB%E5%9E%8B/2020-09-29-20200929-OpenCV矩阵元素类型/1234.png">
+<meta property="og:image" content="https://elkulas.github.io/2020/09/29/20200929-OpenCV%E7%9F%A9%E9%98%B5%E5%85%83%E7%B4%A0%E7%B1%BB%E5%9E%8B/2020-09-29-20200929-OpenCV矩阵元素类型/12345.png">
+<meta property="og:image" content="https://elkulas.github.io/home/jjj/Documents/Hexo/source/_posts/2020-09-29-20200929-OpenCV矩阵元素类型/123.png">
+<meta property="og:image" content="https://elkulas.github.io/2020/09/29/20200929-OpenCV%E7%9F%A9%E9%98%B5%E5%85%83%E7%B4%A0%E7%B1%BB%E5%9E%8B/2020-09-29-20200929-OpenCV矩阵元素类型/23456.png">
+<meta property="article:published_time" content="2020-09-29T13:02:02.000Z">
+<meta property="article:modified_time" content="2020-09-29T13:48:28.850Z">
+<meta property="article:author" content="Elkulas Jiang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://elkulas.github.io/2020/09/29/20200929-OpenCV%E7%9F%A9%E9%98%B5%E5%85%83%E7%B4%A0%E7%B1%BB%E5%9E%8B/2020-09-29-20200929-OpenCV矩阵元素类型/1234.png">
+
+
+<link rel="canonical" href="https://elkulas.github.io/2020/09/29/20200929-OpenCV%E7%9F%A9%E9%98%B5%E5%85%83%E7%B4%A0%E7%B1%BB%E5%9E%8B/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>OpenCV矩阵元素类型 | Elku's Homepage</title>
+  
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Elku's Homepage</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#opencv%E7%9F%A9%E9%98%B5%E5%85%83%E7%B4%A0%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">OpenCV矩阵元素类型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%B1%E5%BA%A6%E5%9B%BE%E4%B8%8A%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98%E4%B8%8E%E8%A7%A3%E5%86%B3"><span class="nav-number">1.1.</span> <span class="nav-text">深度图上遇到的问题与解决</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cvmat%E7%B1%BB%E4%B8%AD%E7%9A%84type%E5%87%BD%E6%95%B0"><span class="nav-number">1.2.</span> <span class="nav-text">CV::Mat类中的type()函数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%8F%8A%E5%85%B6%E5%8F%96%E5%80%BC%E8%8C%83%E5%9B%B4"><span class="nav-number">1.2.0.0.1.</span> <span class="nav-text">数据类型及其取值范围</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Elkulas Jiang"
+      src="/images/shinai2.png">
+  <p class="site-author-name" itemprop="name">Elkulas Jiang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">41</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Elkulas" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Elkulas" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:elkulasjiang@gmail.com" title="E-Mail → mailto:elkulasjiang@gmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/2405601891" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;2405601891" rel="noopener" target="_blank"><i class="weibo fa-fw"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/Elkulas" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;Elkulas" rel="noopener" target="_blank"><i class="twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://elkulas.github.io/2020/09/29/20200929-OpenCV%E7%9F%A9%E9%98%B5%E5%85%83%E7%B4%A0%E7%B1%BB%E5%9E%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shinai2.png">
+      <meta itemprop="name" content="Elkulas Jiang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Elku's Homepage">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          OpenCV矩阵元素类型
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2020-09-29 21:02:02 / 修改时间：21:48:28" itemprop="dateCreated datePublished" datetime="2020-09-29T21:02:02+08:00">2020-09-29</time>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">在处理深度图时遇到的问题以及解释OpenCV中的各种矩阵的类型</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="opencv矩阵元素类型">OpenCV矩阵元素类型</h1>
+<h2 id="深度图上遇到的问题与解决">深度图上遇到的问题与解决</h2>
+<p>目前在处理深度图中遇到了一个小问题,因为所提供得到的深度图和RGB图是对应的,所以可以直接读取16位的深度图来生成带有RGB信息的点云.然而按照最简单的方式进行读取之后,所得到的点云是一个片状的情况.</p>
+<p><img src="2020-09-29-20200929-OpenCV矩阵元素类型/1234.png" /></p>
+<p><img src="2020-09-29-20200929-OpenCV矩阵元素类型/12345.png" /></p>
+<p>可以发现深度是割裂的,并没有出现连续的深度情况,所以可能是在读取的时候出现了截断.然而在实际检查过程中发现,并不是代码读取部分的问题,而是图片数据源上的问题.所以直接输出depth的一个type来看如下</p>
+<p><img src="/home/jjj/Documents/Hexo/source/_posts/2020-09-29-20200929-OpenCV矩阵元素类型/123.png" /></p>
+<p>可以发现,我自己现在获得的depth的一个格式是int 16, 也就是CV8UC3,然而正常的十六位位图应当是CV6UC1, 而后向同学要了一份新的数据之后就可以发现,生成的点云就是连续的,因为这时候获得的深度图的信息就是CV6UC1.</p>
+<p><img src="2020-09-29-20200929-OpenCV矩阵元素类型/23456.png" /></p>
+<h2 id="cvmat类中的type函数">CV::Mat类中的type()函数</h2>
+<p>这里再补充一下关于OPenCV中的一些数据类型的内容</p>
+<p>在使用OPenCV时,一下两个情况是必须知道矩阵元素的数据类型的:</p>
+<ol type="1">
+<li>使用 at 的方式访问数据元素的时候需要指出数据类型</li>
+<li>做数值运算的时候,比如究竟是整数除法还是浮点数除法。</li>
+</ol>
+<p>所以需要使用CV::Mat中的type()函数来确定此时的Mat中的数据类型是什么.</p>
+<p>因为返回值是int,所以返回值和实际类型有以下的对应关系:</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;"></th>
+<th>C1</th>
+<th>C2</th>
+<th>C3</th>
+<th>C4</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">CV_8U</td>
+<td>0</td>
+<td>8</td>
+<td>16</td>
+<td>24</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">CV_8S</td>
+<td>1</td>
+<td>9</td>
+<td>17</td>
+<td>25</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">CV_16U</td>
+<td>2</td>
+<td>10</td>
+<td>18</td>
+<td>26</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">CV_16S</td>
+<td>3</td>
+<td>11</td>
+<td>19</td>
+<td>27</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">CV_32S</td>
+<td>4</td>
+<td>12</td>
+<td>20</td>
+<td>28</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">CV_32F</td>
+<td>5</td>
+<td>13</td>
+<td>21</td>
+<td>29</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">CV_64F</td>
+<td>6</td>
+<td>14</td>
+<td>22</td>
+<td>30</td>
+</tr>
+</tbody>
+</table>
+<p>第四个通道也就是C4表示透明度</p>
+<p>可以通过以下的方式来对不同通道进行访问</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>C1</th>
+<th>C2</th>
+<th>C3</th>
+<th>C4</th>
+<th>C6</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>uchar</td>
+<td><code>uchar</code></td>
+<td><code>cv::Vec2b</code></td>
+<td><code>cv::Vec3b</code></td>
+<td><code>cv::Vec4b</code></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>short</td>
+<td><code>short</code></td>
+<td><code>cv::Vec2s</code></td>
+<td><code>cv::Vec3s</code></td>
+<td><code>cv::Vec4s</code></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>int</td>
+<td><code>int</code></td>
+<td><code>cv::Vec2i</code></td>
+<td><code>cv::Vec3i</code></td>
+<td><code>cv::Vec4i</code></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>float</td>
+<td><code>float</code></td>
+<td><code>cv::Vec2f</code></td>
+<td><code>cv::Vec3f</code></td>
+<td><code>cv::Vec4f</code></td>
+<td><code>cv::Vec6f</code></td>
+</tr>
+<tr class="odd">
+<td>double</td>
+<td><code>double</code></td>
+<td><code>cv::Vec2d</code></td>
+<td><code>cv::Vec3d</code></td>
+<td><code>cv::Vec4d</code></td>
+<td><code>cv::Vec6d</code></td>
+</tr>
+</tbody>
+</table>
+<h5 id="数据类型及其取值范围">数据类型及其取值范围</h5>
+<table>
+<thead>
+<tr class="header">
+<th>数值</th>
+<th>具体类型</th>
+<th>取值范围</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CV_8U</td>
+<td>8 位无符号整数</td>
+<td>（0…..255）</td>
+</tr>
+<tr class="even">
+<td>CV_8S</td>
+<td>8 位符号整数</td>
+<td>（-128…..127）</td>
+</tr>
+<tr class="odd">
+<td>CV_16U</td>
+<td>16 位无符号整数</td>
+<td>（0……65535）</td>
+</tr>
+<tr class="even">
+<td>CV_16S</td>
+<td>16 位符号整数</td>
+<td>（-32768…..32767）</td>
+</tr>
+<tr class="odd">
+<td>CV_32S</td>
+<td>32 位符号整数</td>
+<td>（-2147483648……2147483647）</td>
+</tr>
+<tr class="even">
+<td>CV_32F</td>
+<td>32 位浮点数</td>
+<td>（-FLT_MAX ………FLT_MAX，INF，NAN)</td>
+</tr>
+<tr class="odd">
+<td>CV_64F</td>
+<td>64 位浮点数</td>
+<td>（-DBL_MAX ……….DBL_MAX，INF，NAN)</td>
+</tr>
+</tbody>
+</table>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/09/28/20200928-C-const%E5%85%B3%E9%94%AE%E5%AD%97/" rel="prev" title="C++中的Const关键字">
+                  <i class="fa fa-chevron-left"></i> C++中的Const关键字
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/10/27/20201027-eigen%E5%87%A0%E4%BD%95%E6%A8%A1%E5%9D%97%E4%BD%BF%E7%94%A8/" rel="next" title="Eigen三种旋转之间的初始化以及转换">
+                  Eigen三种旋转之间的初始化以及转换 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Elkulas Jiang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'none'
+      },
+      options: {
+        renderActions: {
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+
+
+</body>
+</html>

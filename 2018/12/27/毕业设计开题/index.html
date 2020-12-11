@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"elkulas.github.io","root":"/","images":"/images","scheme":"Pisces","version":"8.1.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="多传感器联合标定毕业设计的综述性思路以及总体思维框架，指导之后的毕业设计过程统领性文件">
+<meta property="og:type" content="article">
+<meta property="og:title" content="毕业设计开题">
+<meta property="og:url" content="https://elkulas.github.io/2018/12/27/%E6%AF%95%E4%B8%9A%E8%AE%BE%E8%AE%A1%E5%BC%80%E9%A2%98/index.html">
+<meta property="og:site_name" content="Elku&#39;s Homepage">
+<meta property="og:description" content="多传感器联合标定毕业设计的综述性思路以及总体思维框架，指导之后的毕业设计过程统领性文件">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-12-27T11:48:25.000Z">
+<meta property="article:modified_time" content="2020-05-20T04:49:35.744Z">
+<meta property="article:author" content="Elkulas Jiang">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://elkulas.github.io/2018/12/27/%E6%AF%95%E4%B8%9A%E8%AE%BE%E8%AE%A1%E5%BC%80%E9%A2%98/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>毕业设计开题 | Elku's Homepage</title>
+  
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Elku's Homepage</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AF%95%E4%B8%9A%E8%AE%BE%E8%AE%A1%E5%BC%80%E9%A2%98"><span class="nav-number">1.</span> <span class="nav-text">毕业设计开题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E7%9B%AE%E7%9A%84"><span class="nav-number">1.0.1.</span> <span class="nav-text">主要目的</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%8E%B0%E6%9C%89%E6%9D%90%E6%96%99"><span class="nav-number">1.0.2.</span> <span class="nav-text">现有材料</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%AE%E5%89%8D%E6%80%9D%E8%B7%AF"><span class="nav-number">1.0.3.</span> <span class="nav-text">目前思路</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%AD%94%E8%BE%A9%E6%A1%86%E6%9E%B6"><span class="nav-number">1.0.3.1.</span> <span class="nav-text">答辩框架</span></a></li></ol></li></ol></li></ol></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Elkulas Jiang"
+      src="/images/shinai2.png">
+  <p class="site-author-name" itemprop="name">Elkulas Jiang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">41</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Elkulas" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Elkulas" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:elkulasjiang@gmail.com" title="E-Mail → mailto:elkulasjiang@gmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/2405601891" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;2405601891" rel="noopener" target="_blank"><i class="weibo fa-fw"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/Elkulas" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;Elkulas" rel="noopener" target="_blank"><i class="twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://elkulas.github.io/2018/12/27/%E6%AF%95%E4%B8%9A%E8%AE%BE%E8%AE%A1%E5%BC%80%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shinai2.png">
+      <meta itemprop="name" content="Elkulas Jiang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Elku's Homepage">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          毕业设计开题
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-12-27 19:48:25" itemprop="dateCreated datePublished" datetime="2018-12-27T19:48:25+08:00">2018-12-27</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-05-20 12:49:35" itemprop="dateModified" datetime="2020-05-20T12:49:35+08:00">2020-05-20</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%AF%95%E4%B8%9A%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">毕业设计</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">多传感器联合标定毕业设计的综述性思路以及总体思维框架，指导之后的毕业设计过程统领性文件</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="毕业设计开题">毕业设计开题</h2>
+<h4 id="主要目的">主要目的</h4>
+<p>主要目的就是搭建一标准的测试平台以及测试框架，对一个传感器集合进行联合标定。</p>
+<h4 id="现有材料">现有材料</h4>
+<p>实验室现有集成传感器设备一套，内含以下传感器</p>
+<ol type="1">
+<li>RGB 相机</li>
+<li>红外相机</li>
+<li>VLP-16 LiDAR</li>
+<li>Kinect 双目</li>
+</ol>
+<h4 id="目前思路">目前思路</h4>
+<p>需要注意的就是</p>
+<ol type="1">
+<li><p>RGB的内参标定</p>
+<ol type="1">
+<li>这个部分可以寻找一些关于单目相机标定的一些文献，同时可以再这个部分阐明一下相机模型的知识以及内外参问题</li>
+</ol></li>
+<li><p>各个传感器之间的Rt矩阵标定（外参标定）</p>
+<ol type="1">
+<li><p>这个部分需要参考RGB+红外联合标定、RGB+LiDAR联合标定。主要的思想就是，设计一种标定物体与方法，对于某一系列上的点，两个传感器所获得的输入都能获得并且可以进行对应，这样便可以求解得到两个传感器之间的一个Rt矩阵外参</p></li>
+<li><p>涉及文献：两两传感器之间的联合标定平台，典型物体，测试效果</p></li>
+<li><p>三个或者以上的传感器如何进行联合标定并计算两两之间的外参矩阵。这一部分需要进行文献调研。目前朴素想法如下：</p>
+<ol type="1">
+<li>不妨假设三个传感器，进行三次联合标定，AB,AC,BC，分别计算出三个RT矩阵；</li>
+<li>设计出一个场景或者物体，可以同时被多个传感器检测到，与二元联合标定一样处理</li>
+</ol>
+<p>两者均还没有进行调查，但可以肯定对于环境的要求是极大的，采集数据过程会比较痛苦。</p></li>
+</ol></li>
+<li><p>时间同步性</p>
+<ol type="1">
+<li><p>这个部分最重要的一点就是解决多个传感器中的时间不同步的问题。只有做到同步，才能实现所谓的单帧对单帧的图片对应。</p>
+<p>这个部分的文章还没有进行收集</p></li>
+</ol></li>
+<li><p>评价体系（暂不考虑）</p>
+<p>对于每一套标定方法，都需要有一个评价其好坏的标准。这一套标准可以与自身进行对比，比如与真值之间进行比对，从而得到一个评价。</p></li>
+</ol>
+<h5 id="答辩框架">答辩框架</h5>
+<ol type="1">
+<li>背景：
+<ol type="1">
+<li>阐述传感器标定的功能与作用</li>
+<li>阐述多传感器在实际场景中的应用</li>
+<li>阐述多传感器标定的重要性</li>
+</ol></li>
+<li>文献综述：
+<ol type="1">
+<li>研究现状（）</li>
+<li>存在问题：没有将红外、RGB、LiDAR多种传感器融合的一整套</li>
+</ol></li>
+</ol>
+<p>2019.1.3更新</p>
+<ol type="1">
+<li>多传感器标定，如红外、RGB、激光雷达标定已有一些文献。
+<ol type="1">
+<li>IROS2015中Krishnan的工作是计算激光雷达与RGB相机之间的外参（人工参与标定角点），然后使用特定的标定板用同样方法标定激光雷达与红外之间的外参（人工参与标定角点）。随后就可以计算得到红外与RGB之间的外参矩阵。</li>
+<li>2018年十一月Zhang 的工作采用十六线激光雷达。首先标定激光雷达与RGB之间的外参（使用单次标定方法），然而使用另一种标定板标定红外相机与激光雷达之间的外参矩阵。通过两个矩阵相乘计算得到红外与激光雷达的外参标定矩阵。</li>
+</ol></li>
+<li>标定结果评价体系
+<ol type="1">
+<li>与实际真值之间进行标准对比，从而计算标定结果的误差（那么既然有实际真值为什么还需要标定？）</li>
+<li>在同样标定数据集下进行方法比对，使用现有较好的方法与表现（目前SLAM的方法就是这么来评价的居多）</li>
+<li>用另一种标定手段同样标定来进行评价。以红外激光相机三者标定为例，使用Zhang的方法计算得到红外和激光雷达的外参，然后通过Krishnan方法直接标定两者，计算得到的两个标定外参矩阵进行比较分析。该方法存在极大问题就是评价的客观度，或者说并没有具有公信力的一个评判标准。</li>
+<li>对于世界坐标系下对标定物体来做一个真值。</li>
+</ol></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2018/12/15/test/" rel="prev" title="test">
+                  <i class="fa fa-chevron-left"></i> test
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2018/12/27/Random-Sample-Consensus/" rel="next" title="Random Sample Consensus">
+                  Random Sample Consensus <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Elkulas Jiang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'none'
+      },
+      options: {
+        renderActions: {
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+
+
+</body>
+</html>

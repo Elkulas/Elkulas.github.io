@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"elkulas.github.io","root":"/","images":"/images","scheme":"Pisces","version":"8.1.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="使用Boost库遇到的小问题（待更新）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="undefined reference to &#96;boost::system::generic_category()&#39;">
+<meta property="og:url" content="https://elkulas.github.io/2019/12/07/20191207boostlinkproblem/index.html">
+<meta property="og:site_name" content="Elku&#39;s Homepage">
+<meta property="og:description" content="使用Boost库遇到的小问题（待更新）">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-12-07T11:58:04.000Z">
+<meta property="article:modified_time" content="2020-05-20T04:49:35.792Z">
+<meta property="article:author" content="Elkulas Jiang">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://elkulas.github.io/2019/12/07/20191207boostlinkproblem/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>undefined reference to `boost::system::generic_category()' | Elku's Homepage</title>
+  
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Elku's Homepage</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined-reference-to-boostsystemgeneric_category"><span class="nav-number">1.</span> <span class="nav-text">undefined reference to &#96;boost::system::generic_category()&#39;</span></a></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Elkulas Jiang"
+      src="/images/shinai2.png">
+  <p class="site-author-name" itemprop="name">Elkulas Jiang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">41</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Elkulas" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Elkulas" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:elkulasjiang@gmail.com" title="E-Mail → mailto:elkulasjiang@gmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/2405601891" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;2405601891" rel="noopener" target="_blank"><i class="weibo fa-fw"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/Elkulas" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;Elkulas" rel="noopener" target="_blank"><i class="twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://elkulas.github.io/2019/12/07/20191207boostlinkproblem/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shinai2.png">
+      <meta itemprop="name" content="Elkulas Jiang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Elku's Homepage">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          undefined reference to `boost::system::generic_category()'
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-12-07 19:58:04" itemprop="dateCreated datePublished" datetime="2019-12-07T19:58:04+08:00">2019-12-07</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-05-20 12:49:35" itemprop="dateModified" datetime="2020-05-20T12:49:35+08:00">2020-05-20</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ERROR/" itemprop="url" rel="index"><span itemprop="name">ERROR</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">使用Boost库遇到的小问题（待更新）</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="undefined-reference-to-boostsystemgeneric_category">undefined reference to `boost::system::generic_category()'</h1>
+<p>首先，在之前进行编译的时候发现了这个错误，才想到自己没有在CMakeLists.txt里面添加Boost的链接库。在骂自己白痴之后，在按照cmake的<a target="_blank" rel="noopener" href="https://cmake.org/cmake/help/v3.15/module/FindBoost.html">官方文档</a>中所叙述的，添加了如下的cmake字段</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">find_package</span>(Boost REQUIRED)</span><br><span class="line"><span class="keyword">message</span>(STATUS <span class="string">&quot;Boost status:&quot;</span>)</span><br><span class="line"><span class="keyword">message</span>(STATUS <span class="string">&quot; version: $&#123;Boost_VERSION&#125; $&#123;Boost_LIB_VERSION&#125;&quot;</span>)</span><br><span class="line"><span class="keyword">message</span>(STATUS <span class="string">&quot; include path: $&#123;Boost_INCLUDE_DIRS&#125;&quot;</span>)</span><br><span class="line"><span class="keyword">message</span>(STATUS <span class="string">&quot; LIBS: $&#123;Boost_LIBRARIES&#125;&quot;</span>)</span><br><span class="line"><span class="keyword">message</span>(STATUS <span class="string">&quot; LIBS DIR $&#123;Boost_LIBRARY_DIRS&#125;&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">include_directories</span>(<span class="variable">$&#123;Boost_INCLUDE_DIRS&#125;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">target_link_libraries</span>(learnTriangulation <span class="variable">$&#123;Boost_LIBRARIES&#125;</span>)</span><br></pre></td></tr></table></figure>
+<p>自己心里想的就是，这不就和OpenCV一个样子么，然后我就编译了，结果就开始报错</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[build] CMakeFiles/learnTriangulation.dir/main.cpp.o: In <span class="keyword">function</span> `__static_initialization_and_destruction_0(int, int)&#x27;:</span><br><span class="line">[build] main.cpp:(.text+<span class="number">0</span>x128b): undefined reference to `boost::system::generic_category()&#x27;</span><br><span class="line">[build] main.cpp:(.text+<span class="number">0</span>x1297): undefined reference to `boost::system::generic_category()&#x27;</span><br><span class="line">[build] main.cpp:(.text+<span class="number">0</span>x12a3): undefined reference to `boost::system::system_category()&#x27;</span><br><span class="line">[build] collect2: error: ld returned <span class="number">1</span> exit status</span><br></pre></td></tr></table></figure>
+<p>？？？</p>
+<p>我不是明明就添加进去了吗？？</p>
+<p>然后我又重新cmake config了一下，才发现，？，为啥${Boost_LIBRARIES}是空的？</p>
+<p>于是我加了一个小判断</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">NOT</span> Boost_FOUND)</span><br><span class="line">    <span class="keyword">message</span>(<span class="string">&quot;not found BOOST&quot;</span>)</span><br><span class="line">    <span class="keyword">endif</span>()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">NOT</span> Boost_LIBRARIES_FOUND)</span><br><span class="line">    <span class="keyword">message</span>(<span class="string">&quot;not found boost lib&quot;</span>)</span><br><span class="line">    <span class="keyword">endif</span>()</span><br></pre></td></tr></table></figure>
+<p>然后遇到了迷惑的输出</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[cmake] Boost status:</span><br><span class="line">[cmake]  version: <span class="number">105800</span> <span class="number">1</span>_58</span><br><span class="line">[cmake]  <span class="keyword">include</span> path: /usr/<span class="keyword">include</span></span><br><span class="line">[cmake]  LIBS: </span><br><span class="line">[cmake]  LIBS DIR /usr/lib</span><br><span class="line">[cmake] <span class="keyword">not</span> found boost lib</span><br></pre></td></tr></table></figure>
+<p>我自然就觉得肯定是我没找到这个库所以才会产生之前的报错。尝试使用各种方法无果之后，我看到了<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/13467072/c-boost-undefined-reference-to-boostsystemgeneric-category/52737420#52737420?newreg=abb42b9c4bfa49bc857669c533e193bb">这一条</a></p>
+<p>以及里面引用的<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/9723793/undefined-reference-to-boostsystemsystem-category-when-compiling/50146757#50146757">这一条</a>，按照说明添加上了这句话</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">add_definitions</span>(-DBOOST_ERROR_CODE_HEADER_ONLY)</span><br></pre></td></tr></table></figure>
+<p>然后居然真的就build通过了 = =</p>
+<p>先把问题记录在这，之后在康康能不能给个解释</p>
+<hr />
+<p>2019.12.11 更新</p>
+<p>在调研了之后在网上找到如下两个帖子，分别阐述了这个问题。<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/3897839/how-to-link-c-program-with-boost-using-cmake">其中一个</a>解释为是boost本身的bug，<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/56036266/boost-libraries-not-defined">另一个</a>解释是cmake查找不对。</p>
+<p>在<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/9723793/undefined-reference-to-boostsystemsystem-category-when-compiling/50146757#50146757">之前的链接</a>中找到，其实使用上面那个定义会有一定问题，在1.66版本之前的boost库都有这样的问题，所以在使用的过程中可以用这个进行代替</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">add_definitions</span>(-DBOOST_SYSTEM_NO_DEPRECATED)</span><br></pre></td></tr></table></figure>
+<p>在实际进行这样操作之后，在build的过程中仍然出现了一个问题</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[build] [100%] Linking CXX executable learnboost</span><br><span class="line">[build] CMakeFiles&#x2F;learnboost.dir&#x2F;main.cpp.o: In function &#96;boost::filesystem::detail::dir_itr_imp::~dir_itr_imp()&#39;:</span><br><span class="line">[build] &#x2F;usr&#x2F;include&#x2F;boost&#x2F;filesystem&#x2F;operations.hpp:775: undefined reference to &#96;boost::filesystem::detail::dir_itr_close(void*&amp;, void*&amp;)&#39;</span><br></pre></td></tr></table></figure>
+<p>又一次说我没有增加filesystem的引用。。参考<a target="_blank" rel="noopener" href="https://codeyarns.com/2017/09/20/undefined-reference-to-boost-copy_file/">这篇文章</a>之后也没有太大用处.。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/12/02/20191202gitclonespeedup/" rel="prev" title="Git clone 提速问题解决">
+                  <i class="fa fa-chevron-left"></i> Git clone 提速问题解决
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/01/09/20200109ply2pcd/" rel="next" title="PLY 2 PCD">
+                  PLY 2 PCD <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Elkulas Jiang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'none'
+      },
+      options: {
+        renderActions: {
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+
+
+</body>
+</html>

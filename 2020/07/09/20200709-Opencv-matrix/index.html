@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"elkulas.github.io","root":"/","images":"/images","scheme":"Pisces","version":"8.1.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="Opencv 中Mat的一些基础运算总结">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenCV Mat基础运算总结">
+<meta property="og:url" content="https://elkulas.github.io/2020/07/09/20200709-Opencv-matrix/index.html">
+<meta property="og:site_name" content="Elku&#39;s Homepage">
+<meta property="og:description" content="Opencv 中Mat的一些基础运算总结">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-07-09T04:10:55.000Z">
+<meta property="article:modified_time" content="2020-07-09T05:05:47.313Z">
+<meta property="article:author" content="Elkulas Jiang">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://elkulas.github.io/2020/07/09/20200709-Opencv-matrix/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>OpenCV Mat基础运算总结 | Elku's Homepage</title>
+  
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Elku's Homepage</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#opencv-mat%E5%9F%BA%E7%A1%80%E8%BF%90%E7%AE%97%E6%80%BB%E7%BB%93"><span class="nav-number">1.</span> <span class="nav-text">OpenCV Mat基础运算总结</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9F%A9%E9%98%B5%E5%8A%A0%E6%B3%95"><span class="nav-number">1.1.</span> <span class="nav-text">矩阵加法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E9%87%8D%E8%BD%BD%E7%9A%84%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="nav-number">1.1.1.</span> <span class="nav-text">使用重载的“+”运算符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8add%E5%87%BD%E6%95%B0"><span class="nav-number">1.1.2.</span> <span class="nav-text">使用add函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#vector%E4%B9%8B%E9%97%B4%E7%9A%84%E5%8A%A0%E6%B3%95"><span class="nav-number">1.1.3.</span> <span class="nav-text">Vector之间的加法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E4%B8%AA%E6%95%B0%E7%BB%84%E7%9A%84%E5%8A%A0%E6%9D%83%E5%92%8Caddweighted"><span class="nav-number">1.1.4.</span> <span class="nav-text">两个数组的加权和addWeighted</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9F%A9%E9%98%B5%E5%87%8F%E6%B3%95"><span class="nav-number">1.2.</span> <span class="nav-text">矩阵减法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E9%87%8D%E8%BD%BD-%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="nav-number">1.2.1.</span> <span class="nav-text">使用重载“-”运算符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%8F%E6%B3%95%E5%87%BD%E6%95%B0substract"><span class="nav-number">1.2.2.</span> <span class="nav-text">减法函数substract</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%83%E7%B4%A0%E7%9A%84%E7%BB%9D%E5%AF%B9%E5%B7%AEabsdiff"><span class="nav-number">1.2.3.</span> <span class="nav-text">元素的绝对差absdiff</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9F%A9%E9%98%B5%E4%B9%98%E6%B3%95"><span class="nav-number">1.3.</span> <span class="nav-text">矩阵乘法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9F%A9%E9%98%B5%E4%B9%98"><span class="nav-number">1.3.1.</span> <span class="nav-text">矩阵乘*</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%82%B9%E4%B9%98dot"><span class="nav-number">1.3.2.</span> <span class="nav-text">点乘dot</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E4%B8%A4%E4%B8%AAmat%E7%9F%A9%E9%98%B5%E5%AF%B9%E5%BA%94%E4%BD%8D%E7%9A%84%E4%B9%98%E7%A7%AFa.mulb"><span class="nav-number">1.3.3.</span> <span class="nav-text">计算两个Mat矩阵对应位的乘积A.mul(B)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9F%A9%E9%98%B5%E4%B8%8E%E6%A0%87%E9%87%8F%E7%9B%B8%E4%B9%98"><span class="nav-number">1.3.4.</span> <span class="nav-text">矩阵与标量相乘</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E9%87%8D%E8%BD%BD%E7%9A%84%E8%BF%90%E7%AE%97%E7%AC%A6-1"><span class="nav-number">1.3.5.</span> <span class="nav-text">使用重载的“&#x2F;”运算符</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9F%A9%E9%98%B5%E8%BD%AC%E7%BD%AE"><span class="nav-number">1.4.</span> <span class="nav-text">矩阵转置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9F%A9%E9%98%B5%E7%9A%84%E9%80%86"><span class="nav-number">1.5.</span> <span class="nav-text">矩阵的逆</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9F%A9%E9%98%B5%E4%B8%AD%E9%9D%9E%E9%9B%B6%E5%85%83%E7%B4%A0%E4%B8%AA%E6%95%B0"><span class="nav-number">1.6.</span> <span class="nav-text">矩阵中非零元素个数</span></a></li></ol></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Elkulas Jiang"
+      src="/images/shinai2.png">
+  <p class="site-author-name" itemprop="name">Elkulas Jiang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">41</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Elkulas" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Elkulas" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:elkulasjiang@gmail.com" title="E-Mail → mailto:elkulasjiang@gmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/2405601891" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;2405601891" rel="noopener" target="_blank"><i class="weibo fa-fw"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/Elkulas" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;Elkulas" rel="noopener" target="_blank"><i class="twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://elkulas.github.io/2020/07/09/20200709-Opencv-matrix/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shinai2.png">
+      <meta itemprop="name" content="Elkulas Jiang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Elku's Homepage">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          OpenCV Mat基础运算总结
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2020-07-09 12:10:55 / 修改时间：13:05:47" itemprop="dateCreated datePublished" datetime="2020-07-09T12:10:55+08:00">2020-07-09</time>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">Opencv 中Mat的一些基础运算总结</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="opencv-mat基础运算总结">OpenCV Mat基础运算总结</h1>
+<h2 id="矩阵加法">矩阵加法</h2>
+<h3 id="使用重载的运算符">使用重载的“+”运算符</h3>
+<p>矩阵的加法是指两个矩阵对于位置的数值相加，使用OpenCv重载的 <strong>“+”</strong> 运算符,假设两个矩阵都为uchar类型,例如：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Mat</span> src<span class="number">1</span> = (Mat_&lt;uchar&gt;(<span class="number">2</span>,<span class="number">3</span>) &lt;&lt; <span class="number">23</span>, <span class="number">123</span>, <span class="number">90</span>, <span class="number">100</span>, <span class="number">250</span>, <span class="number">0</span>);</span><br><span class="line"><span class="attribute">Mat</span> src<span class="number">2</span> = (Mat_&lt;uchar&gt;(<span class="number">2</span>,<span class="number">3</span>) &lt;&lt; <span class="number">125</span>, <span class="number">150</span>, <span class="number">60</span>, <span class="number">100</span>, <span class="number">10</span>, <span class="number">40</span>);</span><br><span class="line"><span class="attribute">Mat</span> dst = src<span class="number">1</span> + src<span class="number">2</span>;</span><br></pre></td></tr></table></figure>
+<p><strong>123+150</strong>应该等于<strong>273</strong>, 因为两个矩阵的类型都是uchar, 所以"+“运算计算出来的和也是uchar类型, 但是uchar类型范围的最大值是255, 所以273限制为了255。</p>
+<p>利用”+“运算符计算计算Mat的和需注意:两个Mat的数据类型必须是一样的, 否则会报错。</p>
+<p><strong>一个数值与一个Mat对象相加</strong>, 也可以使用”+"运算符, 但是无论这个数值是什么数据类型, 返回的Mat的数据类型都与输入的Mat相同，且结果是矩阵中的每个元素都与这个数值相加:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">float</span> value = <span class="number">100</span>.<span class="number">0</span>;</span><br><span class="line"><span class="attribute">Mat</span> dst<span class="number">1</span> = src<span class="number">1</span> + value;</span><br></pre></td></tr></table></figure>
+<h3 id="使用add函数">使用add函数</h3>
+<p>函数原型</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> add</span><br><span class="line">(</span><br><span class="line">	InputArray src1, </span><br><span class="line">	InputArray src2, </span><br><span class="line">	OutputArray dst, </span><br><span class="line">	InputArray mask = noArray(), </span><br><span class="line">	<span class="keyword">int</span> dtype = <span class="number">-1</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>举例</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Mat src1 = (Mat_&lt;uchar&gt;(<span class="number">2</span>,<span class="number">3</span>) &lt;&lt; <span class="number">23</span>, <span class="number">123</span>, <span class="number">90</span>, <span class="number">100</span>, <span class="number">250</span>, <span class="number">0</span>);</span><br><span class="line">Mat src2 = (Mat_&lt;uchar&gt;(<span class="number">2</span>,<span class="number">3</span>) &lt;&lt; <span class="number">125</span>, <span class="number">150</span>, <span class="number">60</span>, <span class="number">100</span>, <span class="number">10</span>, <span class="number">40</span>);</span><br><span class="line">Mat dst;</span><br><span class="line">add(src1, src2, dst, Mat(), CV_64FC1);</span><br></pre></td></tr></table></figure>
+<p>使用<strong>add</strong>函数时, <strong>输入矩阵的数据类型可以不同</strong>, 二输出矩阵的数据类型可以根据情况自行指定, 只有当<strong>src1</strong>和<strong>src2</strong>的数据类型相同时, <strong>才能令dtype = -1</strong>, 否则仍然会报错。</p>
+<h3 id="vector之间的加法">Vector之间的加法</h3>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Vec3f</span> v<span class="number">1</span> = Vec<span class="number">3</span>f(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);</span><br><span class="line"><span class="attribute">Vec3f</span> v<span class="number">2</span> = Vec<span class="number">3</span>f(<span class="number">10</span>, <span class="number">1</span>, <span class="number">12</span>);</span><br><span class="line"><span class="attribute">Vec3f</span> v = v<span class="number">1</span> + v<span class="number">2</span>;</span><br></pre></td></tr></table></figure>
+<p>###　线性相加scaleAdd</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">C++: void scaleAdd</span><br><span class="line">(</span><br><span class="line">	InputArray src1,     <span class="regexp">//</span> 第一个输入矩阵</span><br><span class="line">	double alpha,        <span class="regexp">//</span> 第一个输入矩阵的比例因子</span><br><span class="line">	InputArray src2,     <span class="regexp">//</span> 与src1大小和类型相同的第二个输入矩阵。</span><br><span class="line">	OutputArray dst</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>它计算一个缩放数组和另一个数组的和:         <strong>dst(I) = alpha * src(I) + src2(I)</strong></p>
+<p>如：</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scale<span class="constructor">Add(<span class="params">imageA</span>,<span class="params">k</span>,<span class="params">imageB</span>,<span class="params">resultC</span>)</span>;</span><br></pre></td></tr></table></figure>
+<p>用矩阵表达式模拟为</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Mat <span class="constructor">A(3, 3, CV_64F)</span>;</span><br><span class="line">...</span><br><span class="line"><span class="module-access"><span class="module"><span class="identifier">A</span>.</span></span>row(<span class="number">0</span>) = <span class="module-access"><span class="module"><span class="identifier">A</span>.</span></span>row(<span class="number">1</span>)*<span class="number">2</span> + <span class="module-access"><span class="module"><span class="identifier">A</span>.</span></span>row(<span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="两个数组的加权和addweighted">两个数组的加权和addWeighted</h3>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">C++: void addWeighted</span><br><span class="line">(</span><br><span class="line">	InputArray src1,      <span class="regexp">//</span> 第一个图像矩阵</span><br><span class="line">	double alpha,         <span class="regexp">//</span> 第一个数组元素的权重。</span><br><span class="line">	InputArray src2,      <span class="regexp">//</span> 与src1大小和通道相同的第二个输入图像矩阵。</span><br><span class="line">	double beta,          <span class="regexp">//</span> 第二个数组元素的权值。</span><br><span class="line">	double gamma,         <span class="regexp">//</span> 与输入数组具有相同大小和通道数的输出数组。</span><br><span class="line">	OutputArray dst,      <span class="regexp">//</span> 每个和加上一个标量。</span><br><span class="line">	int dtype=-<span class="number">1</span>          <span class="regexp">//</span> 可选输出阵列深度;当两个输入数组具有相同的</span><br><span class="line">	                      <span class="regexp">//</span> 深度时，可以将dtype设置为-<span class="number">1</span>，这将等效于src1.depth()。</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>该函数可替换为矩阵表达式:         <strong>dst = src1 * alpha + src2 * beta + gamma;</strong></p>
+<p>如</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Mat</span> img<span class="number">1</span>=imread(<span class="string">&quot;./a1.jpg&quot;</span>);</span><br><span class="line"><span class="attribute">Mat</span> img<span class="number">2</span>=imread(<span class="string">&quot;./a2.jpg&quot;</span>);</span><br><span class="line"><span class="attribute">Mat</span> dst;</span><br><span class="line"><span class="attribute">addWeighted</span>(img<span class="number">1</span>,<span class="number">0</span>.<span class="number">5</span>,img<span class="number">2</span>,<span class="number">0</span>.<span class="number">3</span>,<span class="number">0</span>,dst);</span><br></pre></td></tr></table></figure>
+<h2 id="矩阵减法">矩阵减法</h2>
+<h3 id="使用重载-运算符">使用重载“-”运算符</h3>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Mat</span> a= Mat::eye(Size(<span class="number">3</span>,<span class="number">2</span>), CV_<span class="number">32</span>F);  </span><br><span class="line"><span class="attribute">Mat</span> b= Mat::ones(Size(<span class="number">3</span>,<span class="number">2</span>), CV_<span class="number">32</span>F); </span><br><span class="line"><span class="attribute">Mat</span> d= a-b;</span><br></pre></td></tr></table></figure>
+<p>如果图像是<strong>uchar</strong>类型的，<strong>144-240</strong>不会是 <strong>- 96</strong>，而是uchar能表示的最小值<strong>0</strong></p>
+<h3 id="减法函数substract">减法函数substract</h3>
+<p>计算两个数组或数组与标量之间的每个元素的差。</p>
+<p>函数原型</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">C++: void subtract</span><br><span class="line">(</span><br><span class="line">	InputArray src1,           <span class="regexp">//</span> 第一个输入数组或标量。</span><br><span class="line">	InputArray src2,           <span class="regexp">//</span> 第二个输入数组或标量。</span><br><span class="line">	OutputArray dst,           <span class="regexp">//</span> 与输入阵列相同大小、相同通道数的输出阵列。</span><br><span class="line">	InputArray mask=noArray(), <span class="regexp">//</span> 可选操作面具;这是一个<span class="number">8</span>位的单通道数组，</span><br><span class="line">	                           <span class="regexp">//</span> 指定要更改的输出数组的元素。</span><br><span class="line">	int dtype=-<span class="number">1</span>               <span class="regexp">//</span> 输出数组的可选深度</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>如</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">imshow</span>(<span class="string">&quot;img1&quot;</span>,img1);</span><br><span class="line"><span class="selector-tag">imshow</span>(<span class="string">&quot;img2&quot;</span>,img2);</span><br><span class="line"><span class="selector-tag">subtract</span>(img1,img2,dst);    <span class="comment">// saturate(img1 - img2)</span></span><br><span class="line">							<span class="comment">//注意：要求被处理图片尺寸一致</span></span><br></pre></td></tr></table></figure>
+<h3 id="元素的绝对差absdiff">元素的绝对差absdiff</h3>
+<p>计算两个数组或数组与标量之间的每个元素的绝对差。</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">C++: void absdiff</span><br><span class="line">(</span><br><span class="line">	InputArray src1,    <span class="regexp">//</span> 第一个输入数组或标量。</span><br><span class="line">	InputArray src2,    <span class="regexp">//</span> 第二个输入数组或标量。</span><br><span class="line">	OutputArray dst     <span class="regexp">//</span> 与输入数组具有相同大小和类型的输出数组。</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p><strong>dst = saturate(|src1 - src2|)</strong></p>
+<p>如</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">imshow</span>(<span class="string">&quot;img1&quot;</span>,src<span class="number">1</span>);</span><br><span class="line"><span class="attribute">imshow</span>(<span class="string">&quot;img1&quot;</span>,src<span class="number">2</span>);</span><br><span class="line"><span class="attribute">Mat</span> dst;</span><br><span class="line"><span class="attribute">absdiff</span>(src<span class="number">1</span>, src<span class="number">2</span>, dst);//若dst&lt;<span class="number">0</span>,则dst=|dst|&gt;=<span class="number">0</span></span><br></pre></td></tr></table></figure>
+<h2 id="矩阵乘法">矩阵乘法</h2>
+<h3 id="矩阵乘">矩阵乘*</h3>
+<p>是以数学运算中矩阵相乘的方式实现的，即Mat矩阵A和B被当做纯粹的矩阵做乘法运算，这就<strong>要求A的列数等于B的行数</strong>时，才能定义两个矩阵相乘。如<strong>A</strong>是<strong>m×n</strong>矩阵，<strong>B</strong>是<strong>n×p</strong>矩阵，它们的乘积<strong>AB</strong>是一个<strong>m×p</strong>矩阵。</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Mat <span class="attribute">A</span>=Mat::ones(2,3,CV_32FC1);</span><br><span class="line">Mat <span class="attribute">B</span>=Mat::ones(3,2,CV_32FC1);</span><br><span class="line"><span class="built_in">..</span>.</span><br><span class="line"><span class="attribute">AB</span>=A*B;</span><br></pre></td></tr></table></figure>
+<h3 id="点乘dot">点乘dot</h3>
+<p>参与点乘的两个Mat矩阵的数据类型（type）只能是 CV_32F、 CV_64FC1、 CV_32FC2、 CV_64FC2 这4种类型中的一种。若选用其他类型，比如CV_8UC1，编译器会报错。</p>
+<p>A.dot(B)操作相当于数学向量运算中的点乘，也叫向量的内积、数量积。 对两个向量执行点乘运算，就是对这两个向量对应位一一相乘之后求和的操作，点乘的结果是一个标量。 Mat矩阵的dot方法扩展了一维向量的点乘操作，把整个Mat矩阵扩展成一个行（列）向量，之后执行向量的点乘运算，仍然要求参与dot运算的两个Mat矩阵的行列数完全一致。</p>
+<p>dot方法声明中显示返回值是double，所以A.dot(B)结果是一个double类型数据，不是Mat矩阵，不能把A.dot(B)结果赋值给Mat矩阵！</p>
+<figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Mat <span class="keyword">A</span>=Mat<span class="number">::</span>ones(<span class="number">2</span>,<span class="number">3</span>,CV_8UC1)<span class="comment">;</span></span><br><span class="line">Mat B=Mat<span class="number">::</span>ones(<span class="number">2</span>,<span class="number">3</span>,CV_8UC1)<span class="comment">;</span></span><br><span class="line">double AB<span class="comment">;</span></span><br><span class="line">...</span><br><span class="line">AB = <span class="keyword">A</span>.dot(B)<span class="comment">;</span></span><br></pre></td></tr></table></figure>
+<p>dot操作不对参与运算的矩阵A、B的数据类型做要求，CV_8UC1、CV_32FC1等，可以是任何Opencv定义的类型，如在2中使用的就是CV_8UC1。</p>
+<p>若参与dot运算的两个Mat矩阵是多通道的，则计算结果是所有通道单独计算各自.dot之后，再累计的和，结果仍是一个double类型数据。</p>
+<h3 id="计算两个mat矩阵对应位的乘积a.mulb">计算两个Mat矩阵对应位的乘积<strong>A.mul(B)</strong></h3>
+<p>要求参与运算的矩阵A的行列和B的行列数一致。计算结果是跟A或B行列数一致的一个Mat矩阵。 mul说明：</p>
+<p>1、mul操作不对参与运算的两个矩阵A、B有数据类型上的要求，但要求A，B类型一致，不然报错； 2、Mat AB=A.mul(B)，若声明AB时没有定义AB的数据类型，则默认AB的数据类型跟A和B保存一致； 3、若AB精度不够，可能产生溢出，溢出的值被置为当前精度下的最大值；</p>
+<p>如</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Mat <span class="attribute">A</span>=Mat::ones(2,3,CV_8UC1);</span><br><span class="line">Mat <span class="attribute">B</span>=Mat::ones(2,3,CV_8UC1);</span><br><span class="line"><span class="built_in">..</span>.</span><br><span class="line">Mat <span class="attribute">AB</span>=A.mul(B);</span><br></pre></td></tr></table></figure>
+<h3 id="矩阵与标量相乘">矩阵与标量相乘</h3>
+<p>使用“*”示矩阵与标量相乘；</p>
+<p>##　矩阵除法</p>
+<h3 id="使用重载的运算符-1">使用重载的“/”运算符</h3>
+<p><strong>A/B; alpha/A; A/alpha</strong>都是<strong>点除</strong></p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Mat</span> src<span class="number">1</span> = (Mat_&lt;int&gt;(<span class="number">2</span>, <span class="number">3</span>) &lt;&lt; <span class="number">4</span>, <span class="number">7</span>, <span class="number">1</span>, <span class="number">5</span>, <span class="number">20</span>, <span class="number">24</span>);  //<span class="number">2</span>行<span class="number">3</span>列的矩阵</span><br><span class="line"><span class="attribute">Mat</span> src<span class="number">2</span> = (Mat_&lt;int&gt;(<span class="number">2</span>, <span class="number">3</span>) &lt;&lt; <span class="number">2</span>, <span class="number">7</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">4</span>, <span class="number">48</span>);  //<span class="number">2</span>行<span class="number">3</span>列的矩阵</span><br><span class="line"><span class="attribute">Mat</span> dst<span class="number">1</span>, dst<span class="number">2</span>, dst<span class="number">3</span>;</span><br><span class="line"><span class="attribute">dst1</span> = src<span class="number">1</span> / <span class="number">4</span>;</span><br><span class="line"><span class="attribute">dst2</span> = <span class="number">20</span> / src<span class="number">1</span>;</span><br><span class="line"><span class="attribute">dst3</span> = src<span class="number">1</span> / src<span class="number">2</span>;</span><br><span class="line"><span class="attribute">cout</span> &lt;&lt; <span class="string">&quot;A/alpha:\n&quot;</span> &lt;&lt; dst<span class="number">1</span> &lt;&lt; endl &lt;&lt; endl;</span><br><span class="line"><span class="attribute">cout</span> &lt;&lt; <span class="string">&quot;alpha/A:\n&quot;</span> &lt;&lt; dst<span class="number">2</span> &lt;&lt; endl &lt;&lt; endl;</span><br><span class="line"><span class="attribute">cout</span> &lt;&lt; <span class="string">&quot;A/B:\n&quot;</span> &lt;&lt; dst<span class="number">3</span> &lt;&lt; endl;</span><br></pre></td></tr></table></figure>
+<h2 id="矩阵转置">矩阵转置</h2>
+<p>由Mat类t()函数实现矩阵的转置</p>
+<figure class="highlight gcode"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Mat <span class="name">m1</span> = Mat::eye<span class="comment">(4,6,CV_32FC1)</span>;</span><br><span class="line">...</span><br><span class="line">Mat <span class="name">m1</span>t = <span class="name">m1.</span>t<span class="comment">()</span>;</span><br></pre></td></tr></table></figure>
+<h2 id="矩阵的逆">矩阵的逆</h2>
+<p>其中inv(A)表示矩阵A的逆矩阵</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">Mat</span> m1 = <span class="keyword">Mat</span>::eye(5,5,CV_32FC1);</span><br><span class="line">...</span><br><span class="line"><span class="keyword">Mat</span> m1inv = m1.<span class="built_in">inv</span>();</span><br></pre></td></tr></table></figure>
+<h2 id="矩阵中非零元素个数">矩阵中非零元素个数</h2>
+<p>使用 <strong>countNonZero()</strong> 函数实现物体的像素或面积常需要用到计算矩阵中的非零元素个数</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Mat m1 = Mat::eye(<span class="number">6</span>,<span class="number">6</span>,CV_32FC1);</span><br><span class="line">...</span><br><span class="line"><span class="built_in">int</span> m1num = count<span class="constructor">NonZero(<span class="params">m1</span>)</span>;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/07/01/20200615-Multiple-version-OpenCV/" rel="prev" title="多版本OpenCV安装与共存">
+                  <i class="fa fa-chevron-left"></i> 多版本OpenCV安装与共存
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/07/27/20200727-ORBSLAM-Angle/" rel="next" title="ORBSLAM2:角度的计算实现">
+                  ORBSLAM2:角度的计算实现 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Elkulas Jiang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'none'
+      },
+      options: {
+        renderActions: {
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+
+
+</body>
+</html>

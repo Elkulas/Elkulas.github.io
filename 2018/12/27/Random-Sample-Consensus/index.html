@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"elkulas.github.io","root":"/","images":"/images","scheme":"Pisces","version":"8.1.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="This article mainly illustrates the main idea of random sample consensus (RANSAC) approach.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Random Sample Consensus">
+<meta property="og:url" content="https://elkulas.github.io/2018/12/27/Random-Sample-Consensus/index.html">
+<meta property="og:site_name" content="Elku&#39;s Homepage">
+<meta property="og:description" content="This article mainly illustrates the main idea of random sample consensus (RANSAC) approach.">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://elkulas.github.io/2018/12/27/Random-Sample-Consensus/2018-12-27-Random-Sample-Consensus/plot_ransac_1.png">
+<meta property="og:image" content="https://elkulas.github.io/2018/12/27/Random-Sample-Consensus/2018-12-27-Random-Sample-Consensus/1.png">
+<meta property="og:image" content="https://elkulas.github.io/2018/12/27/Random-Sample-Consensus/2018-12-27-Random-Sample-Consensus/2.png">
+<meta property="og:image" content="https://elkulas.github.io/2018/12/27/Random-Sample-Consensus/2018-12-27-Random-Sample-Consensus/3.png">
+<meta property="og:image" content="https://elkulas.github.io/2018/12/27/Random-Sample-Consensus/2018-12-27-Random-Sample-Consensus/4.png">
+<meta property="og:image" content="https://elkulas.github.io/2018/12/27/Random-Sample-Consensus/2018-12-27-Random-Sample-Consensus/5.png">
+<meta property="og:image" content="https://elkulas.github.io/2018/12/27/Random-Sample-Consensus/2018-12-27-Random-Sample-Consensus/6.png">
+<meta property="og:image" content="https://elkulas.github.io/2018/12/27/Random-Sample-Consensus/2018-12-27-Random-Sample-Consensus/7.png">
+<meta property="og:image" content="https://elkulas.github.io/2018/12/27/Random-Sample-Consensus/2018-12-27-Random-Sample-Consensus/8.png">
+<meta property="og:image" content="https://elkulas.github.io/2018/12/27/Random-Sample-Consensus/2018-12-27-Random-Sample-Consensus/9.png">
+<meta property="og:image" content="https://elkulas.github.io/2018/12/27/Random-Sample-Consensus/2018-12-27-Random-Sample-Consensus/10.png">
+<meta property="og:image" content="https://elkulas.github.io/2018/12/27/Random-Sample-Consensus/2018-12-27-Random-Sample-Consensus/11.png">
+<meta property="og:image" content="https://elkulas.github.io/2018/12/27/Random-Sample-Consensus/2018-12-27-Random-Sample-Consensus/Snipaste_2018-12-28_16-53-07.png">
+<meta property="article:published_time" content="2018-12-27T12:56:53.000Z">
+<meta property="article:modified_time" content="2020-05-20T04:49:35.736Z">
+<meta property="article:author" content="Elkulas Jiang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://elkulas.github.io/2018/12/27/Random-Sample-Consensus/2018-12-27-Random-Sample-Consensus/plot_ransac_1.png">
+
+
+<link rel="canonical" href="https://elkulas.github.io/2018/12/27/Random-Sample-Consensus/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>Random Sample Consensus | Elku's Homepage</title>
+  
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Elku's Homepage</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#random-sample-consensus-ransac"><span class="nav-number">1.</span> <span class="nav-text">Random Sample Consensus (RANSAC)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#background"><span class="nav-number">1.1.</span> <span class="nav-text">Background</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#overview"><span class="nav-number">1.2.</span> <span class="nav-text">Overview</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#original-data-set"><span class="nav-number">1.2.0.1.</span> <span class="nav-text">Original data set</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#first-sample"><span class="nav-number">1.2.0.2.</span> <span class="nav-text">First sample</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#second-sample"><span class="nav-number">1.2.0.3.</span> <span class="nav-text">Second sample</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#third-sample"><span class="nav-number">1.2.0.4.</span> <span class="nav-text">Third sample</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#fourth-sample"><span class="nav-number">1.2.0.5.</span> <span class="nav-text">Fourth sample</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#optimal-selection"><span class="nav-number">1.2.0.6.</span> <span class="nav-text">Optimal selection</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#parameters"><span class="nav-number">1.3.</span> <span class="nav-text">Parameters</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#parameter-n"><span class="nav-number">1.3.1.</span> <span class="nav-text">Parameter N</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#example-of-n"><span class="nav-number">1.3.2.</span> <span class="nav-text">Example of N</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#parameter-d"><span class="nav-number">1.3.3.</span> <span class="nav-text">Parameter d</span></a></li></ol></li></ol></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Elkulas Jiang"
+      src="/images/shinai2.png">
+  <p class="site-author-name" itemprop="name">Elkulas Jiang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">41</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Elkulas" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Elkulas" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:elkulasjiang@gmail.com" title="E-Mail → mailto:elkulasjiang@gmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/2405601891" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;2405601891" rel="noopener" target="_blank"><i class="weibo fa-fw"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/Elkulas" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;Elkulas" rel="noopener" target="_blank"><i class="twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://elkulas.github.io/2018/12/27/Random-Sample-Consensus/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shinai2.png">
+      <meta itemprop="name" content="Elkulas Jiang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Elku's Homepage">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Random Sample Consensus
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-12-27 20:56:53" itemprop="dateCreated datePublished" datetime="2018-12-27T20:56:53+08:00">2018-12-27</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-05-20 12:49:35" itemprop="dateModified" datetime="2020-05-20T12:49:35+08:00">2020-05-20</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Camera-Calibration/" itemprop="url" rel="index"><span itemprop="name">Camera Calibration</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">This article mainly illustrates the main idea of random sample consensus (RANSAC) approach.</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="random-sample-consensus-ransac">Random Sample Consensus (RANSAC)</h2>
+<h3 id="background">Background</h3>
+<p>For a series of data set, if we want to figure out the inside model or the relationship of the data, least-squares estimation approach can be adopted. However, what if the data is contaminated?</p>
+<p>The figure below shows the problem.</p>
+<p><img src="2018-12-27-Random-Sample-Consensus\plot_ransac_1.png" style="width:300px height:300px"></p>
+<p>From our perspective, we can clearly distinguish the line with the highest probability to represent the data set, which is the blue one. However not the LSE. LSE will be greatly disrupted by the noise points and other points which are not matter at all. In our example these points are the points located on the down-left. A <strong>robust</strong> way to select points and build the model is to use RANSAC.</p>
+<p>Before going further on the algorithm explanation and analysis, we need to introduce two terms for the data. "Inliers" represent data points whose distribution can be explained by some set of model parameters. "Outliers" represent data points which are not fit the model, generated from erroneous measurements or incorrect hypotheses about the interpretation of data.</p>
+<p>Also, RANSAC assumes that given a set of liners, there exists a procedure which can estimate the parameters of a model that optimally explains or fits this data. The main idea for the RANSAC is to find the optimal explanation of the model.</p>
+<p>View estimation as a two-stage process:</p>
+<ul>
+<li>Classify data points as outliers or inliers</li>
+<li>Fit model to inliers while ignoring outliers</li>
+</ul>
+<h3 id="overview">Overview</h3>
+<p>The RANSAC algorithm is essentially composed of two steps that are iteratively repeated:</p>
+<ol type="1">
+<li>In the first step, a sample subset containing minimal data items is randomly selected from the input dataset (This means, if the output relation is a line, the minimal items is 2, if the relation is the transformation matrix, the min should be 3 pairs of points). A fitting model and the corresponding model parameters are computed using only the elements of this sample subset. The cardinality of the sample subset is the smallest sufficient to determine the model parameters.</li>
+<li>In the second step, the algorithm checks which elements of the entire dataset are consistent with the model instantiated by the estimated model parameters obtained from the first step. A data element will be considered as an outlier if it does not fit the fitting model instantiated by the set of estimated model parameters within some error threshold that defines the maximum deviation attributable to the effect of noise.</li>
+</ol>
+<p>The set of inliers obtained for the fitting model is called consensus set. The RANSAC algorithm will iteratively repeat the above two steps until the obtained consensus set in certain iteration has enough inliers.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p>The following graphs well illustrate the principle of the two steps shown above.</p>
+<h5 id="original-data-set">Original data set</h5>
+<p><img src="2018-12-27-Random-Sample-Consensus\1.png" style="width:300px height:200px"></p>
+<h5 id="first-sample">First sample</h5>
+<p><img src="2018-12-27-Random-Sample-Consensus\2.png" style="width:300px height:200px"></p>
+<p><img src="2018-12-27-Random-Sample-Consensus\3.png" style="width:300px height:200px"></p>
+<h5 id="second-sample">Second sample</h5>
+<p><img src="2018-12-27-Random-Sample-Consensus\4.png" style="width:300px height:200px"></p>
+<p><img src="2018-12-27-Random-Sample-Consensus\5.png" style="width:300px height:200px"></p>
+<h5 id="third-sample">Third sample</h5>
+<p><img src="2018-12-27-Random-Sample-Consensus\6.png" style="width:300px height:200px"></p>
+<p><img src="2018-12-27-Random-Sample-Consensus\7.png" style="width:300px height:200px"></p>
+<h5 id="fourth-sample">Fourth sample</h5>
+<p><img src="2018-12-27-Random-Sample-Consensus\8.png" style="width:300px height:200px"></p>
+<p><img src="2018-12-27-Random-Sample-Consensus\9.png" style="width:300px height:200px"></p>
+<h5 id="optimal-selection">Optimal selection</h5>
+<p><img src="2018-12-27-Random-Sample-Consensus\10.png" style="width:300px height:200px"></p>
+<p>After the 4 iterations, the parameter of the model is determined. Literally, the more iteration times is adopted, the more accurate the model will be to represent the data set. However, there DO exist some tricks to set the max iteration number.</p>
+<p>The algorithm can be explained as below.[^ 2]</p>
+<p>[^]:</p>
+<p><img src="2018-12-27-Random-Sample-Consensus\11.png" style="width:600px height:400px"></p>
+<h3 id="parameters">Parameters</h3>
+<h4 id="parameter-n">Parameter N</h4>
+<p>The key point is to choose the proper parameters. The parameters required is shown below:</p>
+<ul>
+<li>e = probability that a point is an outlier</li>
+<li>s = number of points in a sample</li>
+<li>N = number of samples (we want to compute this)</li>
+<li>p = desired probability that we get a good sample</li>
+</ul>
+<p>The parameter <span class="math inline">\(e\)</span> and <span class="math inline">\(s\)</span> are given by the data set itself, <span class="math inline">\(p\)</span> depends on our requirement. The only parameter we have to design is <span class="math inline">\(N\)</span>. <span class="math inline">\(N\)</span> meets the equation below:</p>
+<p><span class="math display">\[1-(1-(1-e)^{s})^{N} = p\]</span></p>
+<p>where,</p>
+<p><span class="math inline">\(1-e\)</span> denotes the probability that choosing one point yields an inlier;</p>
+<p><span class="math inline">\((1-e)^{s}\)</span> denotes the probability of choosing <span class="math inline">\(s\)</span> inliers in a row (sample only contains inliers);</p>
+<p><span class="math inline">\(1-(1-e)^{s}\)</span> denotes the probability that one or more points in the sample were outliers (sample is contaminated);</p>
+<p><span class="math inline">\((1-(1-e)^{s})^{N}\)</span> denotes the probability that <span class="math inline">\(N\)</span> samples were contaminated;</p>
+<p>$1-(1-(1-e)<sup>{s})</sup>{N} $ denotes the probability that at least one sample was not contaminated (at least one sample of <span class="math inline">\(s\)</span> points is composed of only inliers). <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
+<p>if <span class="math inline">\(p\)</span> is determined, the desired <span class="math inline">\(N\)</span> is determined by the following equation.</p>
+<p><span class="math display">\[N = \frac{\log(1-p)}{\log(1-(1-e)^{s})}\]</span></p>
+<h4 id="example-of-n">Example of N</h4>
+<p>Right the example shown below</p>
+<p><span class="math inline">\(n=12\)</span> points is in the data set, the minimal sample size <span class="math inline">\(s = 2\)</span>, outliers ratio <span class="math inline">\(e = 1/6 =&gt; 20\%\)</span></p>
+<p>So the <span class="math inline">\(N = 5\)</span> give us a 99% chance of getting a pure-inlier sample.</p>
+<p><img src="2018-12-27-Random-Sample-Consensus\Snipaste_2018-12-28_16-53-07.png" /></p>
+<h4 id="parameter-d">Parameter d</h4>
+<p>Another important parameter is distance threshold <span class="math inline">\(d\)</span>. Usually <span class="math inline">\(d\)</span> is chosen empirically. but when measurement error is known to be Gaussian with mean 0 and variance <span class="math inline">\(S^2\)</span>, there are ways to determine <span class="math inline">\(p\)</span>.</p>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>https://en.wikipedia.org/wiki/Random_sample_consensus<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>http://www.cse.psu.edu/~rtc12/CSE486/lecture15.pdf<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2018/12/27/%E6%AF%95%E4%B8%9A%E8%AE%BE%E8%AE%A1%E5%BC%80%E9%A2%98/" rel="prev" title="毕业设计开题">
+                  <i class="fa fa-chevron-left"></i> 毕业设计开题
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/01/12/github-hexo-build/" rel="next" title="使用Github与Hexo搭建个人网站">
+                  使用Github与Hexo搭建个人网站 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Elkulas Jiang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'none'
+      },
+      options: {
+        renderActions: {
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+
+
+</body>
+</html>
