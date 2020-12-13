@@ -31,13 +31,15 @@
 <meta property="og:site_name" content="Elku&#39;s Homepage">
 <meta property="og:description" content="想来简单记录一下关于静态链接库和动态链接库的一些知识">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://elkulas.github.io/2020/05/20/20200520-Shared-StaticLibs/2020-05-20-20200520-Shared-StaticLibs/Screenshot%20from%202020-05-20%2019-35-48.png">
-<meta property="og:image" content="https://elkulas.github.io/2020/05/20/20200520-Shared-StaticLibs/2020-05-20-20200520-Shared-StaticLibs/Screenshot%20from%202020-05-20%2020-20-53.png">
+<meta property="og:image" content="https://elkulas.github.io/2020/05/20/20200520-Shared-StaticLibs/Screenshot%20from%202020-05-20%2019-35-48.png">
+<meta property="og:image" content="https://elkulas.github.io/2020/05/20/20200520-Shared-StaticLibs/Screenshot%20from%202020-05-20%2020-20-53.png">
 <meta property="article:published_time" content="2020-05-20T11:15:54.000Z">
-<meta property="article:modified_time" content="2020-05-20T12:38:08.186Z">
+<meta property="article:modified_time" content="2020-12-11T07:58:30.018Z">
 <meta property="article:author" content="Elkulas Jiang">
+<meta property="article:tag" content="原理">
+<meta property="article:tag" content="OS">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://elkulas.github.io/2020/05/20/20200520-Shared-StaticLibs/2020-05-20-20200520-Shared-StaticLibs/Screenshot%20from%202020-05-20%2019-35-48.png">
+<meta name="twitter:image" content="https://elkulas.github.io/2020/05/20/20200520-Shared-StaticLibs/Screenshot%20from%202020-05-20%2019-35-48.png">
 
 
 <link rel="canonical" href="https://elkulas.github.io/2020/05/20/20200520-Shared-StaticLibs/">
@@ -182,20 +184,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">41</span>
+          <span class="site-state-item-count">42</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-count">17</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">24</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -271,9 +273,24 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2020-05-20 19:15:54 / 修改时间：20:38:08" itemprop="dateCreated datePublished" datetime="2020-05-20T19:15:54+08:00">2020-05-20</time>
+      <time title="创建时间：2020-05-20 19:15:54" itemprop="dateCreated datePublished" datetime="2020-05-20T19:15:54+08:00">2020-05-20</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-12-11 15:58:30" itemprop="dateModified" datetime="2020-12-11T15:58:30+08:00">2020-12-11</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">原理</span></a>
+        </span>
     </span>
 
   
@@ -297,7 +314,7 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc main.c /usr/lib/printf.o /usr/lib/scanf.o . . .</span><br></pre></td></tr></table></figure>
 <p>这确实是一种有效的链接方式，通过这种方式可以完成对main.o中的relocatable的部分进行relocate。但是一旦文件多的话这种方式就会变得很繁琐。因此在进行实际LInking过程中，可以将需要链接的部分整理到一个库中，这也就是我们所说的静态链接库。</p>
 <p>静态链接库在linux-x64下本质上是一种压缩包，所以后缀都是.a。文件执行静态链接的过程如下所示：</p>
-<p><img src="2020-05-20-20200520-Shared-StaticLibs/Screenshot%20from%202020-05-20%2019-35-48.png" /></p>
+<p><img src="Screenshot%20from%202020-05-20%2019-35-48.png" /></p>
 <p>从这张图可以清楚的看到，即使所有的.o文件都在.a库中，但是Linker可以做到从静态库中找到main.o所reference的symbol，并将其链接。因此这是一种比较方便的方法对文件进行链接。</p>
 <h3 id="对symbol的解引用resolve-reference">对symbol的解引用(Resolve Reference)</h3>
 <p>在没有进行链接的main.o文件中，因为调用了非自身module的一些变量或者函数，因此会存在一个包含这些变量以及函数的symbol table，来告诉之后的Linker，他需要在之后的文件中找到这些symbol的declare place。</p>
@@ -320,7 +337,7 @@
 <p>静态链接库虽然比较方便，但是有一点比较麻烦，就是静态链接库太笨重了。一旦有一点改动，则需要对整个库进行重新编译。同时，如果有多个进程重复引用同一个函数的话，也存在重复load静态库的笨重操作，并且很吃内存。</p>
 <p>因此，便出现了动态链接库。</p>
 <p>动态库之所以厉害，主要是他可以在任何时候介入链接，而不像静态库一样只有一种笨重的连接方式。动态库可以可以在程序load进memory时候链接，也可以在运行的时候进链接。具体链接的示意图如下所示</p>
-<p><img src="2020-05-20-20200520-Shared-StaticLibs/Screenshot%20from%202020-05-20%2020-20-53.png" /></p>
+<p><img src="Screenshot%20from%202020-05-20%2020-20-53.png" /></p>
 <p>相比于静态链接，动态链接做的比较巧。</p>
 <p>最基本的理念就是，在可执行文件生成的时候使用静态链接的手段，在load的过程中完成所有的linking的工作。在第一步Linker进行链接的时候，其实code和data这两块并没有copy进去（也就是最占内存的两块），而真正进行操作的其实是relocation的信息和symbol table的信息。在有了这两部分的信息之后，在load的时候就可以从动态库中调用data和code这两部分了。、</p>
 <p>在进入loader之后，可执行程序还会调用一个动态Linker来完成剩下的连接工作。这个动态Linker也就是图中所述的ld-linux.so，自己本身也是一个动态链接库。该动态Linker会做以下的relocation来使code和data运作</p>
@@ -337,6 +354,10 @@
     
 
     <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%8E%9F%E7%90%86/" rel="tag"># 原理</a>
+              <a href="/tags/OS/" rel="tag"># OS</a>
+          </div>
 
         
 
