@@ -24,24 +24,23 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"elkulas.github.io","root":"/","images":"/images","scheme":"Pisces","version":"8.1.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="简单解释一下双线性插值">
+<meta name="description" content="变换的一些层次以及特殊的变换解释,等距变换,相似变换,仿射变换,射影变换之间的区别">
 <meta property="og:type" content="article">
-<meta property="og:title" content="双线性插值与实现">
-<meta property="og:url" content="https://elkulas.github.io/2020/11/24/20201123-biibterpol/index.html">
+<meta property="og:title" content="各个变换的层次">
+<meta property="og:url" content="https://elkulas.github.io/2020/12/20/transformations/index.html">
 <meta property="og:site_name" content="Elku&#39;s Homepage">
-<meta property="og:description" content="简单解释一下双线性插值">
+<meta property="og:description" content="变换的一些层次以及特殊的变换解释,等距变换,相似变换,仿射变换,射影变换之间的区别">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://elkulas.github.io/2020/11/24/20201123-biibterpol/2020-11-24-20201123-biibterpol/v2-ad3d95548a97aa47ca85867cd0f2e161_720w.jpg">
-<meta property="article:published_time" content="2020-11-24T01:56:04.000Z">
-<meta property="article:modified_time" content="2020-12-11T06:39:10.897Z">
+<meta property="article:published_time" content="2020-12-20T14:12:50.000Z">
+<meta property="article:modified_time" content="2020-12-20T15:20:07.726Z">
 <meta property="article:author" content="Elkulas Jiang">
-<meta property="article:tag" content="算法">
-<meta property="article:tag" content="C++">
+<meta property="article:tag" content="原理">
+<meta property="article:tag" content="数学">
+<meta property="article:tag" content="多视图几何">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://elkulas.github.io/2020/11/24/20201123-biibterpol/2020-11-24-20201123-biibterpol/v2-ad3d95548a97aa47ca85867cd0f2e161_720w.jpg">
 
 
-<link rel="canonical" href="https://elkulas.github.io/2020/11/24/20201123-biibterpol/">
+<link rel="canonical" href="https://elkulas.github.io/2020/12/20/transformations/">
 
 
 <script class="page-configurations">
@@ -53,7 +52,7 @@
     lang   : 'zh-CN'
   };
 </script>
-<title>双线性插值与实现 | Elku's Homepage</title>
+<title>各个变换的层次 | Elku's Homepage</title>
   
 
 
@@ -167,7 +166,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <section class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8C%E7%BA%BF%E6%80%A7%E6%8F%92%E5%80%BC"><span class="nav-number">1.</span> <span class="nav-text">双线性插值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#opencv%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">OpenCV实现</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AD%89%E8%B7%9D%E5%8F%98%E6%8D%A2-isometries"><span class="nav-number">1.</span> <span class="nav-text">等距变换 Isometries</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E7%94%B1%E5%BA%A6"><span class="nav-number">1.1.</span> <span class="nav-text">自由度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E5%8F%98%E9%87%8F"><span class="nav-number">1.2.</span> <span class="nav-text">不变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BE%A4%E5%92%8C%E5%AE%9A%E5%90%91"><span class="nav-number">1.3.</span> <span class="nav-text">群和定向</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E4%BC%BC%E5%8F%98%E6%8D%A2-similarity-transformations"><span class="nav-number">2.</span> <span class="nav-text">相似变换 Similarity transformations</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E7%94%B1%E5%BA%A6-1"><span class="nav-number">2.1.</span> <span class="nav-text">自由度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E5%8F%98%E9%87%8F-1"><span class="nav-number">2.2.</span> <span class="nav-text">不变量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%BF%E5%B0%84%E5%8F%98%E6%8D%A2-affine-transformations"><span class="nav-number">3.</span> <span class="nav-text">仿射变换 Affine transformations</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E7%94%B1%E5%BA%A6-2"><span class="nav-number">3.1.</span> <span class="nav-text">自由度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9F%A9%E9%98%B5a%E7%9A%84%E7%90%86%E8%A7%A3"><span class="nav-number">3.2.</span> <span class="nav-text">矩阵A的理解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E5%8F%98%E9%87%8F-2"><span class="nav-number">3.3.</span> <span class="nav-text">不变量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%84%E5%BD%B1%E5%8F%98%E6%8D%A2-projective-transformations"><span class="nav-number">4.</span> <span class="nav-text">射影变换 Projective transformations</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E7%94%B1%E5%BA%A6-3"><span class="nav-number">4.1.</span> <span class="nav-text">自由度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E5%8F%98%E9%87%8F-3"><span class="nav-number">4.2.</span> <span class="nav-text">不变量</span></a></li></ol></li></ol></div>
         </section>
         <!--/noindex-->
 
@@ -249,7 +248,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://elkulas.github.io/2020/11/24/20201123-biibterpol/">
+    <link itemprop="mainEntityOfPage" href="https://elkulas.github.io/2020/12/20/transformations/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/shinai2.png">
@@ -262,7 +261,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          双线性插值与实现
+          各个变换的层次
         </h1>
 
         <div class="post-meta-container">
@@ -272,30 +271,24 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2020-11-24 09:56:04" itemprop="dateCreated datePublished" datetime="2020-11-24T09:56:04+08:00">2020-11-24</time>
+      <time title="创建时间：2020-12-20 22:12:50 / 修改时间：23:20:07" itemprop="dateCreated datePublished" datetime="2020-12-20T22:12:50+08:00">2020-12-20</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-12-11 14:39:10" itemprop="dateModified" datetime="2020-12-11T14:39:10+08:00">2020-12-11</time>
-      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
+          <a href="/categories/%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">原理</span></a>
         </span>
     </span>
 
   
 </div>
 
-            <div class="post-description">简单解释一下双线性插值</div>
+            <div class="post-description">变换的一些层次以及特殊的变换解释,等距变换,相似变换,仿射变换,射影变换之间的区别</div>
         </div>
       </header>
 
@@ -303,28 +296,125 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h2 id="双线性插值">双线性插值</h2>
-<p>双线性差值本质就是两次单线性差值,也就是在两个方向计算了三次.</p>
-<p><img src="2020-11-24-20201123-biibterpol/v2-ad3d95548a97aa47ca85867cd0f2e161_720w.jpg" style="zoom: 67%;" /></p>
-<p>向这里就是Q代表的四个点分别加以权重然后对P点进行赋值.权重的取值本质上就是根据P点和四个点之间的距离来决定的</p>
-<p>x方向上的两次单线性插值 <span class="math display">\[
-f\left(R_{1}\right)=\frac{x_{2}-x}{x_{2}-x_{1}} f\left(Q_{11}\right)+\frac{x-x_{1}}{x_{2}-x_{1}} f\left(Q_{21}\right)
+        <p>不同的变换有不同的结构,理解这些对于EIgen中的一些结构的理解有较好的帮助.这篇主要内容来源于<计算机视觉中的多视图几何>一书的1.4小节</p>
+<p>这里要注意的是,这里所涉及的变换是针对于平面上的运动,也就是对于平面射影变换,其射影线性群为<span class="math inline">\(PL(3)\)</span></p>
+<p><span class="math inline">\(PL(3)\)</span>中重要的子群就是<strong>仿射群</strong>以及<strong>欧式群</strong>, <strong>仿射群</strong>是由<span class="math inline">\(PL(3)\)</span>中最后一行为(0,0,1)的矩阵组成的子群; <strong>欧式群</strong>是仿射群的子群,其左上角2x2矩阵是正交的.</p>
+<h2 id="等距变换-isometries">等距变换 Isometries</h2>
+<p>等距变换是平面<span class="math inline">\(\mathbb{R}^{2}\)</span>的变换,其保持欧氏距离不变,一个等距变换可以表示为 <span class="math display">\[
+\left(\begin{array}{l}
+x^{\prime} \\
+y^{\prime} \\
+1
+\end{array}\right)=\left[\begin{array}{ccc}
+\epsilon \cos \theta &amp; -\sin \theta &amp; t_{x} \\
+\epsilon \sin \theta &amp; \cos \theta &amp; t_{y} \\
+0 &amp; 0 &amp; 1
+\end{array}\right]\left(\begin{array}{l}
+x \\
+y \\
+1
+\end{array}\right)
+\]</span> 其中<span class="math inline">\(\epsilon=\pm 1\)</span>,如果<span class="math inline">\(\epsilon=+ 1\)</span> 那么这个等距变换就是 <strong>保向</strong>的并且也是<strong>欧式变换</strong>; 如果<span class="math inline">\(\epsilon=- 1\)</span>,那么这个变换是逆向的,比如反射(diag(-1,1,1)和欧式变换的复合;</p>
+<p>分块形式 <span class="math display">\[
+\mathbf{x}^{\prime}=\mathrm{H}_{\mathrm{E}} \mathbf{x}=\left[\begin{array}{cc}
+\mathrm{R} &amp; \mathbf{t} \\
+\mathbf{0}^{\top} &amp; 1
+\end{array}\right] \mathbf{x}
+\]</span> 其中R就是旋转矩阵,t就是平移矢量</p>
+<h3 id="自由度">自由度</h3>
+<p>平面欧式变换有三个自由度: 旋转一个,平移两个.</p>
+<h3 id="不变量">不变量</h3>
+<p>长度,面积,角度等</p>
+<h3 id="群和定向">群和定向</h3>
+<p>当<span class="math inline">\(\epsilon=+ 1\)</span>,R阵的行列式是1那么他就是保向的.</p>
+<p>保向的等距变换形成一个群,但是逆向的不是</p>
+<h2 id="相似变换-similarity-transformations">相似变换 Similarity transformations</h2>
+<p>相似变换是一个等距变换和一个均匀变换的复合 <span class="math display">\[
+\left(\begin{array}{l}
+x^{\prime} \\
+y^{\prime} \\
+1
+\end{array}\right)=\left[\begin{array}{ccc}
+s \cos \theta &amp; -s \sin \theta &amp; t_{x} \\
+s \sin \theta &amp; s \cos \theta &amp; t_{y} \\
+0 &amp; 0 &amp; 1
+\end{array}\right]\left(\begin{array}{l}
+x \\
+y \\
+1
+\end{array}\right)
+\]</span> 分块形式 <span class="math display">\[
+\mathbf{x}^{\prime}=\mathrm{H}_{\mathrm{S}} \mathbf{x}=\left[\begin{array}{ll}
+s \mathrm{R} &amp; \mathbf{t} \\
+\mathbf{0}^{\top} &amp; 1
+\end{array}\right] \mathbf{x}
+\]</span> 其中标量<span class="math inline">\(s\)</span>表示均匀缩放, 相似变换在变换的时候保持了"形状"</p>
+<h3 id="自由度-1">自由度</h3>
+<p>四个自由度,相比等距变换,多了缩放因子这个自由度,变换可以用两组对应点来计算</p>
+<h3 id="不变量-1">不变量</h3>
+<p>直线的夹角不受旋转,平移和均匀缩放的影响,所以是相似不变量(如平行线总是平行线)</p>
+<p>直线线段长度的<strong>比值</strong></p>
+<p>面积的<strong>比值</strong></p>
+<h2 id="仿射变换-affine-transformations">仿射变换 Affine transformations</h2>
+<p>仿射变换是一个非奇异线性变换与一个平移变换的复合 <span class="math display">\[
+\left(\begin{array}{l}
+x^{\prime} \\
+y^{\prime} \\
+1
+\end{array}\right)=\left[\begin{array}{ccc}
+a_{11} &amp; a_{12} &amp; t_{x} \\
+a_{21} &amp; a_{22} &amp; t_{y} \\
+0 &amp; 0 &amp; 1
+\end{array}\right]\left(\begin{array}{l}
+x \\
+y \\
+1
+\end{array}\right)
+\]</span> 分块形式 <span class="math display">\[
+\mathbf{x}^{\prime}=\mathrm{H}_{\mathrm{A}} \mathbf{x}=\left[\begin{array}{cc}
+\mathrm{A} &amp; \mathbf{t} \\
+\mathbf{0}^{\mathrm{T}} &amp; 1
+\end{array}\right] \mathbf{x}
+\]</span> 其中<span class="math inline">\(\mathrm{A}\)</span>是一个2x2的非奇异矩阵</p>
+<h3 id="自由度-2">自由度</h3>
+<p>6</p>
+<p>相比较与相似变换,平面仿射变换有六个自由度(六个矩阵元素),变换可以使用三组对应点来计算</p>
+<h3 id="矩阵a的理解">矩阵A的理解</h3>
+<p>仿射矩阵A可以分解成以下形式 <span class="math display">\[
+\mathrm{A}=\mathrm{R}(\theta) \mathrm{R}(-\phi) \mathrm{D} \mathrm{R}(\phi)
 \]</span></p>
 <p><span class="math display">\[
-f\left(R_{2}\right)=\frac{x_{2}-x}{x_{2}-x_{1}} f\left(Q_{12}\right)+\frac{x-x_{1}}{x_{2}-x_{1}} f\left(Q_{22}\right)
+\mathrm{D}=\left[\begin{array}{cc}
+\lambda_{1} &amp; 0 \\
+0 &amp; \lambda_{2}
+\end{array}\right]
 \]</span></p>
-<p>y方向上的一次单次插值 <span class="math display">\[
-f(P)=\frac{y_{2}-y}{y_{2}-y_{1}} f\left(R_{1}\right)+\frac{y-y_{1}}{y_{2}-y_{1}} f\left(R_{2}\right)
-\]</span> 总结而言便是 <span class="math display">\[
-f(x, y)=\frac{f\left(Q_{11}\right)}{\left(x_{2}-x_{1}\right)\left(y_{2}-y_{1}\right)}\left(x_{2}-x\right)\left(y_{2}-y\right)+\frac{f\left(Q_{21}\right)}{\left(x_{2}-x_{1}\right)\left(y_{2}-y_{1}\right)}\left(x-x_{1}\right)\left(y_{2}-y\right)+\frac{f\left(Q_{12}\right)}{\left(x_{2}-x_{1}\right)\left(y_{2}-y_{1}\right)}\left(x_{2}-x\right)\left(y-y_{1}\right)
-\]</span> 因为根据前提,也就是双线性插值的前提,可以很简单的得到以下关系 <span class="math display">\[
-x_{2}=x_{1}+1 ; y_{2}=y_{1}+1
-\]</span> 将这个式子带回去,分母就全部都是1 <span class="math display">\[
-f(x, y)=f\left(Q_{11}\right)\left(x_{2}-x\right)\left(y_{2}-y\right)+f\left(Q_{21}\right)\left(x-x_{1}\right)\left(y_{2}-y\right)+f\left(Q_{12}\right)\left(x_{2}-x\right)\left(y-y_{1}\right)+f\left(Q_{22}\right)\left(x-x_{1}\right)\left(y-y_{1}\right)
-\]</span> 用这个式子就可以进行双线性插值的求解</p>
-<h2 id="opencv实现">OpenCV实现</h2>
-<p>这里参考高博的方式,给出8位图像的双线性插值函数</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">float</span> <span class="title">GetPixelValue</span><span class="params">(<span class="keyword">const</span> cv::Mat &amp;img, <span class="keyword">float</span> x, <span class="keyword">float</span> y)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(img.type() == <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 固定指针初始指向dst点左上角的点</span></span><br><span class="line">        uchar *data = &amp;img.data[<span class="keyword">int</span>(y) * img.step + <span class="keyword">int</span>(x)];</span><br><span class="line">        <span class="keyword">float</span> xx = x - <span class="built_in">floor</span>(x);</span><br><span class="line">        <span class="keyword">float</span> yy = y - <span class="built_in">floor</span>(y);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">float</span>(</span><br><span class="line">            	<span class="comment">// data[0] 左上角的点</span></span><br><span class="line">                (<span class="number">1</span> - xx) * (<span class="number">1</span> - yy) * data[<span class="number">0</span>] +</span><br><span class="line">            	<span class="comment">// data[1] 右上角的点</span></span><br><span class="line">                xx * (<span class="number">1</span> - yy) * data[<span class="number">1</span>] +</span><br><span class="line">            	<span class="comment">// data[img.step] 左下角的点</span></span><br><span class="line">                (<span class="number">1</span> - xx) * yy * data[img.step] +</span><br><span class="line">            	<span class="comment">// data[img.step + 1] 右下角的点</span></span><br><span class="line">                xx * yy * data[img.step + <span class="number">1</span>]</span><br><span class="line">        ); </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>(这边理解也就是在右边加上一个原图的矩阵,然后每个矩阵向右结合)</p>
+<p>因此仿射矩阵A可以看成是一个原图的旋转(<span class="math inline">\(\phi\)</span>),然后在原图旋转的基础上在xy方向上分别进行<span class="math inline">\(\lambda\)</span>的缩放,然后再加上一个回转(<span class="math inline">\(-\phi\)</span>)和最后一个旋转(<span class="math inline">\(\theta\)</span>)的复合</p>
+<p>正因如此,其比相似变换多了两个自由度: 1. 缩放方向的角度<span class="math inline">\(\phi\)</span> ; 2. 缩放参数比率<span class="math inline">\(\lambda_1 : \lambda_2\)</span></p>
+<p>本质就是在一个特定角的两个垂直方向上进行缩放,如下图所示</p>
+<h3 id="不变量-2">不变量</h3>
+<ol type="1">
+<li>平行线</li>
+</ol>
+<p>两个平行线在仿射变换后相较于另一个无穷远点,但他们仍然平行</p>
+<ol start="2" type="1">
+<li>平行线段的长度比</li>
+<li>面积比</li>
+</ol>
+<h2 id="射影变换-projective-transformations">射影变换 Projective transformations</h2>
+<p>射影变换是齐次坐标的一般非奇异线性变换,是仿射变换的推广,其分块形式如下 <span class="math display">\[
+\mathbf{x}^{\prime}=\mathrm{H}_{\mathrm{P}} \mathbf{x}=\left[\begin{array}{cc}
+\mathrm{A} &amp; \mathbf{t} \\
+\mathbf{v}^{\top} &amp; v
+\end{array}\right] \mathbf{X}
+\]</span> 其中矢量<span class="math inline">\(\mathbf{v}=\left(v_{1}, v_{2}\right)^{\top}\)</span></p>
+<h3 id="自由度-3">自由度</h3>
+<p>8</p>
+<p>虽然有九个元素,但是只有他们的比率是有意义的,可以使用不共线的四组点来解算</p>
+<p>其不能确定是否保向</p>
+<h3 id="不变量-3">不变量</h3>
+<p>四共线点的交比:也即是直线比率的比率是射影不变量</p>
 
     </div>
 
@@ -334,22 +424,20 @@ f(x, y)=f\left(Q_{11}\right)\left(x_{2}-x\right)\left(y_{2}-y\right)+f\left(Q_{2
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
-              <a href="/tags/C/" rel="tag"># C++</a>
+              <a href="/tags/%E5%8E%9F%E7%90%86/" rel="tag"># 原理</a>
+              <a href="/tags/%E6%95%B0%E5%AD%A6/" rel="tag"># 数学</a>
+              <a href="/tags/%E5%A4%9A%E8%A7%86%E5%9B%BE%E5%87%A0%E4%BD%95/" rel="tag"># 多视图几何</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2020/11/23/20201123-16bit-image-get/" rel="prev" title="OpenCV遍历16位图像(Updating)">
-                  <i class="fa fa-chevron-left"></i> OpenCV遍历16位图像(Updating)
+                <a href="/2020/12/15/BundalAdjustment/" rel="prev" title="再谈Bundle Adjustment">
+                  <i class="fa fa-chevron-left"></i> 再谈Bundle Adjustment
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2020/11/24/20201124-%E7%BC%A9%E6%94%BE%E5%86%85%E5%8F%82/" rel="next" title="图像缩放后相机内参变化">
-                  图像缩放后相机内参变化 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>

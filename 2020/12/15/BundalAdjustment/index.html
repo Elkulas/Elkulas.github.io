@@ -36,7 +36,7 @@
 <meta property="og:image" content="https://elkulas.github.io/2020/12/15/BundalAdjustment/Screenshot%20from%202020-12-15%2013-57-42.png">
 <meta property="og:image" content="https://elkulas.github.io/2020/12/15/BundalAdjustment/Screenshot%20from%202020-12-15%2014-08-55.png">
 <meta property="article:published_time" content="2020-12-15T04:52:28.000Z">
-<meta property="article:modified_time" content="2020-12-15T06:48:01.196Z">
+<meta property="article:modified_time" content="2020-12-15T07:42:49.278Z">
 <meta property="article:author" content="Elkulas Jiang">
 <meta property="article:tag" content="原理">
 <meta property="article:tag" content="算法">
@@ -187,7 +187,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-count">43</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -200,7 +200,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -278,7 +278,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2020-12-15 12:52:28 / 修改时间：14:48:01" itemprop="dateCreated datePublished" datetime="2020-12-15T12:52:28+08:00">2020-12-15</time>
+      <time title="创建时间：2020-12-15 12:52:28 / 修改时间：15:42:49" itemprop="dateCreated datePublished" datetime="2020-12-15T12:52:28+08:00">2020-12-15</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -386,7 +386,11 @@
 <p>这个很重要,感觉理解之后就很舒坦了</p>
 <p>因此,我们需要找到的就是<strong>重投影误差对于各个状态量之间的雅克比</strong>,这边的雅克比简单来说就是去找到一种关系,也就是<strong>坐标点发生微小变化之后观测值(重投影误差)会怎么变</strong>,<strong>相机位姿发生微小变化之后观测值会怎么变</strong>, 雅克比矩阵就是阐述了这种变化的关系.因为各个变量之间的关系常常是非线性的,因此在这个过程中需要进行线性化处理,所以务必要关注<strong>是在哪个时刻哪个位置进行线性化的,线性化的工作点在哪</strong>.</p>
 <p>那么,所要求解的就是两个雅克比,这里借用一下视觉SLAM十四讲的结论 P167</p>
-<p>使用相机的投影模型可以得到<strong>变换到相机坐标系下三维坐标点到二维平面uv的雅克比</strong>(2x3) <span class="math display">\[
+<p>使用相机的投影模型可以得到<strong>变换到相机坐标系下三维坐标点到二维平面uv的雅克比</strong>(2x3)</p>
+<p>P表示世界坐标系下的值,P'表示变换到当前相机系下的值 <span class="math display">\[
+\boldsymbol{P}^{\prime}=\left(\exp \left(\boldsymbol{\xi}^{\wedge}\right) \boldsymbol{P}\right)_{1: 3}
+\]</span></p>
+<p><span class="math display">\[
 u=f_{x} \frac{X^{\prime}}{Z^{\prime}}+c_{x}, \quad v=f_{y} \frac{Y^{\prime}}{Z^{\prime}}+c_{y}
 \]</span></p>
 <p><span class="math display">\[
@@ -406,7 +410,9 @@ u=f_{x} \frac{X^{\prime}}{Z^{\prime}}+c_{x}, \quad v=f_{y} \frac{Y^{\prime}}{Z^{
 \frac{f_{x}}{Z^{\prime}} &amp; 0 &amp; -\frac{f_{x} X^{\prime}}{Z^{\prime 2}} &amp; -\frac{f_{x} X^{\prime} Y^{\prime}}{Z^{\prime 2}} &amp; f_{x}+\frac{f_{x} X^{2}}{Z^{\prime 2}} &amp; -\frac{f_{x} Y^{\prime}}{Z^{\prime}} \\
 0 &amp; \frac{f_{y}}{Z^{\prime}} &amp; -\frac{f_{y} Y^{\prime}}{Z^{\prime 2}} &amp; -f_{y}-\frac{f_{y} Y^{\prime 2}}{Z^{\prime 2}} &amp; \frac{f_{y} X^{\prime} Y^{\prime}}{Z^{\prime 2}} &amp; \frac{f_{y} X^{\prime}}{Z^{\prime}}
 \end{array}\right]
-\]</span> 而对于重投影误差对空间点P的倒数,也可以使用链式法则进行求解(2x3) <span class="math display">\[
+\]</span> 而对于重投影误差对空间点P的倒数,也可以使用链式法则进行求解(2x3)</p>
+<p>注意,这边所计算的是误差杜绝世界坐标系下的点P的导数</p>
+<p>(<strong>所以为什么要用世界坐标系下的导数呢</strong>) <span class="math display">\[
 \frac{\partial \boldsymbol{r}}{\partial \boldsymbol{P}}=\frac{\partial \boldsymbol{r}}{\partial \boldsymbol{P}^{\prime}} \frac{\partial \boldsymbol{P}^{\prime}}{\partial \boldsymbol{P}}
 \]</span></p>
 <p><span class="math display">\[
@@ -444,6 +450,9 @@ u=f_{x} \frac{X^{\prime}}{Z^{\prime}}+c_{x}, \quad v=f_{y} \frac{Y^{\prime}}{Z^{
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2020/12/20/transformations/" rel="next" title="各个变换的层次">
+                  各个变换的层次 <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>
