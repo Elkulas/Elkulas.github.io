@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"elkulas.github.io","root":"/","images":"/images","scheme":"Pisces","version":"8.1.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="三角化的数理流程以及工程实现">
+<meta property="og:type" content="article">
+<meta property="og:title" content="三角化">
+<meta property="og:url" content="https://elkulas.github.io/2020/12/27/Triangulation/index.html">
+<meta property="og:site_name" content="Elku&#39;s Homepage">
+<meta property="og:description" content="三角化的数理流程以及工程实现">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-12-27T05:41:19.000Z">
+<meta property="article:modified_time" content="2020-12-27T13:25:15.946Z">
+<meta property="article:author" content="Elkulas Jiang">
+<meta property="article:tag" content="原理">
+<meta property="article:tag" content="多视图几何">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://elkulas.github.io/2020/12/27/Triangulation/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>三角化 | Elku's Homepage</title>
+  
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Elku's Homepage</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B7%AF%E6%A0%87%E7%82%B9%E4%B8%89%E8%A7%92%E5%8C%96"><span class="nav-number">1.</span> <span class="nav-text">路标点三角化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E9%98%90%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">问题阐述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E4%B8%89%E8%A7%92%E5%BD%A2%E6%B3%95"><span class="nav-number">1.2.</span> <span class="nav-text">线性三角形法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#orbslam%E4%B8%AD%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.3.</span> <span class="nav-text">ORBSLAM中的实现</span></a></li></ol></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Elkulas Jiang"
+      src="/images/shinai2.png">
+  <p class="site-author-name" itemprop="name">Elkulas Jiang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">45</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Elkulas" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Elkulas" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:elkulasjiang@gmail.com" title="E-Mail → mailto:elkulasjiang@gmail.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/2405601891" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;2405601891" rel="noopener" target="_blank"><i class="weibo fa-fw"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/Elkulas" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;Elkulas" rel="noopener" target="_blank"><i class="twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://elkulas.github.io/2020/12/27/Triangulation/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/shinai2.png">
+      <meta itemprop="name" content="Elkulas Jiang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Elku's Homepage">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          三角化
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2020-12-27 13:41:19 / 修改时间：21:25:15" itemprop="dateCreated datePublished" datetime="2020-12-27T13:41:19+08:00">2020-12-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">原理</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">三角化的数理流程以及工程实现</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="路标点三角化">路标点三角化</h1>
+<p>这里原理部分主要是参考多视图几何低十一章,结构计算,代码部分主要参考ORBSLAM中的实现</p>
+<h2 id="问题阐述">问题阐述</h2>
+<p>在已知两视图之间的变换关系-基本矩阵<strong>F</strong>,求解三维点<strong>X</strong></p>
+<p>假设测量点是<span class="math inline">\(\mathrm{x}\)</span>和<span class="math inline">\(\mathrm{x}^{\prime}\)</span>,<span class="math inline">\(\mathbf{x} \leftrightarrow \mathbf{x}^{\prime}\)</span>,如果没有误差,那么存在一个三维点<span class="math inline">\(\mathbf{X}\)</span>满足<span class="math inline">\(\mathbf{x}=\mathrm{P} \mathbf{X}, \mathbf{x}^{\prime}=\mathrm{P}^{\prime} \mathbf{X}\)</span>.其中P表示摄像机矩阵</p>
+<p>定义<span class="math inline">\(\tau\)</span>是对应点<span class="math inline">\(\mathbf{x} \leftrightarrow \mathbf{x}^{\prime}\)</span>以及一对相机矩阵<span class="math inline">\(\mathrm{P}\)</span>和<span class="math inline">\(\mathrm{P}^{\prime}\)</span>来计算空间点<span class="math inline">\(\mathbf{X}\)</span>的一种三角形法,有 <span class="math display">\[
+\mathbf{X}=\tau\left(\mathbf{x}, \mathbf{x}^{\prime}, \mathbf{P}, \mathbf{P}^{\prime}\right)
+\]</span> 该三角形称为在变换H下是不变的,如果 <span class="math display">\[
+\tau\left(\mathbf{x}, \mathbf{x}^{\prime}, \mathbf{P}, \mathbf{P}^{\prime}\right)=\mathbf{H}^{-1} \tau\left(\mathbf{x}, \mathbf{x}^{\prime}, \mathrm{PH}^{-1}, \mathrm{P}^{\prime} \mathrm{H}^{-1}\right)
+\]</span> 这也就是说,用了变换之后的相机矩阵也可以得到相同的三维空间点,也就是使用这种方法是XX变换不变的.</p>
+<p>###　为什么用二维误差而不是三维</p>
+<p>对于射影重构而言，在三维射影空间<span class="math inline">\(\mathbb{P}^{3}\)</span>对误差进行最小化是不合适的．因为像距离和垂直等概念在射影几何下无效．如果使用这种三维空间下的误差来计算的话，这种方法并不是射影不变的</p>
+<p><strong>真正的射影不变的方法需要在二维上进行</strong>，估计一个三维点<span class="math inline">\(\hat{\mathrm{X}}\)</span>，其满足摄像机几何，所以他的投影便是 <span class="math display">\[
+\hat{\mathbf{x}}=\mathrm{P} \hat{\mathbf{X}} \quad \hat{\mathbf{x}}^{\prime}=\mathrm{P}^{\prime} \hat{\mathbf{X}}
+\]</span> 这么做的目的就是，使用测量的<span class="math inline">\(\mathrm{x}\)</span>和<span class="math inline">\(\mathrm{x}^{\prime}\)</span>,来估计<span class="math inline">\(\hat{\mathrm{X}}\)</span></p>
+<p>在噪声的影响下，最大似然估计由最小化重投影误差－－<span class="math inline">\(\hat{\mathrm{X}}\)</span>的投影到图像测量点的距离得到</p>
+<h2 id="线性三角形法">线性三角形法</h2>
+<p>线性三角形法就是一种DLT的方式,在每一幅图上都有测量<span class="math inline">\(\mathbf{x}=\mathrm{P} \mathbf{X}, \mathbf{x}^{\prime}=\mathrm{P}^{\prime} \mathbf{X}\)</span>,且这些方程可以组合成<span class="math inline">\(\mathrm{AX}=0\)</span>的方式,其是关于<span class="math inline">\(\mathrm{X}\)</span>的线性方程.</p>
+<p>因为有<span class="math inline">\(\mathbf{x}=\mathrm{P} \mathbf{X}\)</span>,所以可以得到叉乘的形式,也就是<span class="math inline">\(\mathbf{x} \times(\mathrm{P} \mathbf{X})=\mathbf{0}\)</span>,展开可以得到 <span class="math display">\[
+\begin{aligned}
+x\left(\mathbf{p}^{3 \top} \mathbf{X}\right)-\left(\mathbf{p}^{1 \top} \mathbf{X}\right) &amp;=0 \\
+y\left(\mathbf{p}^{3 \top} \mathbf{X}\right)-\left(\mathbf{p}^{2 \top} \mathbf{X}\right) &amp;=0 \\
+x\left(\mathbf{p}^{2 \top} \mathbf{X}\right)-y\left(\mathbf{p}^{1 \top} \mathbf{X}\right) &amp;=0
+\end{aligned}
+\]</span> 其中<span class="math inline">\(\mathbf{p}^{i \top}\)</span>是相机矩阵<span class="math inline">\(\mathrm{P}\)</span>的行,所以<span class="math inline">\(\mathrm{AX}=0\)</span>方程使用两个点可以获得以下的A矩阵 <span class="math display">\[
+A=\left[\begin{array}{c}
+x \mathbf{p}^{3 \top}-\mathbf{p}^{1 \top} \\
+y \mathbf{p}^{3 \top}-\mathbf{p}^{2 \top} \\
+x^{\prime} \mathbf{p}^{\prime 3 T}-\mathbf{p}^{\prime 1 \top} \\
+y^{\prime} \mathbf{p}^{\prime 3 \top}-\mathbf{p}^{\prime 2 \top}
+\end{array}\right]
+\]</span> 也就是说,每一组像点可以获得4个方程,这是一个冗余的方程组,因此可以使用齐次的方式(DLT)来进行求解</p>
+<p>###　齐次方程组的最小二乘解</p>
+<p>考虑到方程<span class="math inline">\(\mathrm{AX}=0\)</span>，同时该方程方程数目大于未知量个数，因此是一个超定方程组，如果ｘ是方程组一个解，那么kx这些也是属于方程的解,也就是存在解空间.具体解法如下</p>
+<p><strong>目标</strong></p>
+<p>给定一个行数不少于列数的矩阵A,求最小化<span class="math inline">\(\|\mathrm{Ax}\|\)</span>并满足<span class="math inline">\(\|\mathrm{x}\|=1\)</span>的x</p>
+<p><strong>解法</strong></p>
+<p><span class="math inline">\(\mathrm{x}\)</span>是<span class="math inline">\(\mathrm{V}\)</span>的最后一列,其中<span class="math inline">\(A=U D V^{\top}\)</span>是<span class="math inline">\(A\)</span>的SVD分解</p>
+<h2 id="orbslam中的实现">ORBSLAM中的实现</h2>
+<p>ORBSLAM中关于三角化点的构造在Initializer中,</p>
+<p>其实现和之前原理中的是一模一样的</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** 给定投影矩阵P1,P2和图像上的匹配特征点点kp1,kp2，从而计算三维点坐标</span></span><br><span class="line"><span class="comment"> * @brief </span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * @param[in] kp1               特征点, in reference frame</span></span><br><span class="line"><span class="comment"> * @param[in] kp2               特征点, in current frame</span></span><br><span class="line"><span class="comment"> * @param[in] P1                投影矩阵P1</span></span><br><span class="line"><span class="comment"> * @param[in] P2                投影矩阵P2</span></span><br><span class="line"><span class="comment"> * @param[in &amp; out] x3D         计算的三维点</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Initializer::Triangulate</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">const</span> cv::KeyPoint &amp;kp1,    <span class="comment">//特征点, in reference frame</span></span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">const</span> cv::KeyPoint &amp;kp2,    <span class="comment">//特征点, in current frame</span></span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">const</span> cv::Mat &amp;P1,          <span class="comment">//投影矩阵P1</span></span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">const</span> cv::Mat &amp;P2,          <span class="comment">//投影矩阵P2</span></span></span></span><br><span class="line"><span class="function"><span class="params">    cv::Mat &amp;x3D)</span>               <span class="comment">//三维点</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 原理</span></span><br><span class="line">    <span class="comment">// Trianularization: 已知匹配特征点对&#123;x x&#x27;&#125; 和 各自相机矩阵&#123;P P&#x27;&#125;, 估计三维点 X</span></span><br><span class="line">    <span class="comment">// x&#x27; = P&#x27;X  x = PX</span></span><br><span class="line">    <span class="comment">// 它们都属于 x = aPX模型</span></span><br><span class="line">    <span class="comment">//                         |X|</span></span><br><span class="line">    <span class="comment">// |x|     |p1 p2  p3  p4 ||Y|     |x|    |--p0--||.|</span></span><br><span class="line">    <span class="comment">// |y| = a |p5 p6  p7  p8 ||Z| ===&gt;|y| = a|--p1--||X|</span></span><br><span class="line">    <span class="comment">// |z|     |p9 p10 p11 p12||1|     |z|    |--p2--||.|</span></span><br><span class="line">    <span class="comment">// 采用DLT的方法：x叉乘PX = 0</span></span><br><span class="line">    <span class="comment">// |yp2 -  p1|     |0|</span></span><br><span class="line">    <span class="comment">// |p0 -  xp2| X = |0|</span></span><br><span class="line">    <span class="comment">// |xp1 - yp0|     |0|</span></span><br><span class="line">    <span class="comment">// 两个点:</span></span><br><span class="line">    <span class="comment">// |yp2   -  p1  |     |0|</span></span><br><span class="line">    <span class="comment">// |p0    -  xp2 | X = |0| ===&gt; AX = 0</span></span><br><span class="line">    <span class="comment">// |y&#x27;p2&#x27; -  p1&#x27; |     |0|</span></span><br><span class="line">    <span class="comment">// |p0&#x27;   - x&#x27;p2&#x27;|     |0|</span></span><br><span class="line">    <span class="comment">// 变成程序中的形式：</span></span><br><span class="line">    <span class="comment">// |xp2  - p0 |     |0|</span></span><br><span class="line">    <span class="comment">// |yp2  - p1 | X = |0| ===&gt; AX = 0</span></span><br><span class="line">    <span class="comment">// |x&#x27;p2&#x27;- p0&#x27;|     |0|</span></span><br><span class="line">    <span class="comment">// |y&#x27;p2&#x27;- p1&#x27;|     |0|</span></span><br><span class="line">    <span class="comment">// 然后就组成了一个四元一次正定方程组，SVD求解，右奇异矩阵的最后一行就是最终的解.</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">//这个就是上面注释中的矩阵A</span></span><br><span class="line">    <span class="function">cv::Mat <span class="title">A</span><span class="params">(<span class="number">4</span>,<span class="number">4</span>,CV_32F)</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//构造参数矩阵A</span></span><br><span class="line">    A.row(<span class="number">0</span>) = kp1.pt.x*P1.row(<span class="number">2</span>)-P1.row(<span class="number">0</span>);</span><br><span class="line">    A.row(<span class="number">1</span>) = kp1.pt.y*P1.row(<span class="number">2</span>)-P1.row(<span class="number">1</span>);</span><br><span class="line">    A.row(<span class="number">2</span>) = kp2.pt.x*P2.row(<span class="number">2</span>)-P2.row(<span class="number">0</span>);</span><br><span class="line">    A.row(<span class="number">3</span>) = kp2.pt.y*P2.row(<span class="number">2</span>)-P2.row(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">//奇异值分解的结果</span></span><br><span class="line">    cv::Mat u,w,vt;</span><br><span class="line">	<span class="comment">//对系数矩阵A进行奇异值分解</span></span><br><span class="line">    cv::SVD::compute(A,w,u,vt,cv::SVD::MODIFY_A| cv::SVD::FULL_UV);</span><br><span class="line">	<span class="comment">//根据前面的结论，奇异值分解右矩阵的最后一行其实就是解，原理类似于前面的求最小二乘解，四个未知数四个方程正好正定</span></span><br><span class="line">	<span class="comment">//别忘了我们更习惯用列向量来表示一个点的空间坐标</span></span><br><span class="line">    x3D = vt.row(<span class="number">3</span>).t();</span><br><span class="line">	<span class="comment">//为了符合齐次坐标的形式，使最后一维为1</span></span><br><span class="line">    x3D = x3D.rowRange(<span class="number">0</span>,<span class="number">3</span>)/x3D.at&lt;<span class="keyword">float</span>&gt;(<span class="number">3</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%8E%9F%E7%90%86/" rel="tag"># 原理</a>
+              <a href="/tags/%E5%A4%9A%E8%A7%86%E5%9B%BE%E5%87%A0%E4%BD%95/" rel="tag"># 多视图几何</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/12/21/HarrisScore/" rel="prev" title="Harris角点Score计算">
+                  <i class="fa fa-chevron-left"></i> Harris角点Score计算
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Elkulas Jiang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'none'
+      },
+      options: {
+        renderActions: {
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+
+
+</body>
+</html>
