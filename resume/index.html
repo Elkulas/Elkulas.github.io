@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8">
+
+<title>雷达相机标定参数自动评估</title>
+
+</head>
+
+<body>
+
+<h2>人工标定参数评估</h2>
+<p>在云端观察绿色投影点是否和图像上的人贴合</p>
+<img src="images/CAM_HK_FS0_L_1624609409051159.png"
+     alt="人工标定评估"
+     width="640"
+     height="360">
+
+<h2>点云边缘投影结果</h2>
+<p>在点云中根据前后两点的距离差得到点云中的边缘点，而后根据距离阈值得到仅仅包含人的边缘点，将这部分边缘点投影至包含人的图像中</p>
+<p>使用语义以及canny得到的边缘图如下</p>
+<img src="images/22.png"
+     alt="边缘"
+     width="457"
+     height="366">
+<p>对边缘图进行距离反变换，将点云边缘点进行投影便可计算当前得分</p>
+<img src="images/CAM_HK_FS0_L_1624609409051159_edge.png"
+     alt="自动标定评估"
+     width="640"
+     height="360">
+
+</body>
+
+</html>
