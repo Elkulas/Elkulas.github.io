@@ -8,8 +8,8 @@
 
 
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico">
   <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
 <link rel="stylesheet" href="/css/main.css">
@@ -22,7 +22,7 @@
 
 <script class="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"elkulas.github.io","root":"/","images":"/images","scheme":"Pisces","version":"8.1.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+    var CONFIG = {"hostname":"elkulas.github.io","root":"/","images":"/images","scheme":"Pisces","version":"8.1.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
 <meta name="description" content="Eigen中对于matrix和vector中的块操作">
 <meta property="og:type" content="article">
@@ -180,7 +180,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">58</span>
+          <span class="site-state-item-count">56</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -374,11 +374,18 @@
 <td style="text-align: left;">matrix.bottomRows(q);</td>
 <td style="text-align: left;">matrix.bottomRows<q>();</td>
 </tr>
+<tr class="odd">
+<td style="text-align: center;">包含前q列 <a target="_blank" rel="noopener" href="http://eigen.tuxfamily.org/dox/classEigen_1_1DenseBase.html#a4c7c4e7a7264c0acde4632d35a9a2635">*</a></td>
+<td style="text-align: left;">matrix.leftCols(p);</td>
+<td style="text-align: left;">matrix.leftCols</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">包含后q列 <a target="_blank" rel="noopener" href="http://eigen.tuxfamily.org/dox/classEigen_1_1DenseBase.html#a5a43920b4d907a7edba59c26fba7b43d">*</a></td>
+<td style="text-align: left;">matrix.rightCols(q);</td>
+<td style="text-align: left;">matrix.rightCols<q>();</td>
+</tr>
 </tbody>
 </table>
-| 包含前q列 <a target="_blank" rel="noopener" href="http://eigen.tuxfamily.org/dox/classEigen_1_1DenseBase.html#a4c7c4e7a7264c0acde4632d35a9a2635">*</a> | matrix.leftCols(p); | matrix.leftCols
-<p>
-<p>(); | | 包含后q列 <a target="_blank" rel="noopener" href="http://eigen.tuxfamily.org/dox/classEigen_1_1DenseBase.html#a5a43920b4d907a7edba59c26fba7b43d">*</a> | matrix.rightCols(q); | matrix.rightCols<q>();|</p>
 <h2 id="向量的块操作">向量的块操作</h2>
 <p>对于vector也存在分块的操作</p>
 <table>
